@@ -2,17 +2,26 @@
 
 import { Swiper, SwiperSlide } from "swiper/react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { NavSliderNext, NavSliderPrev } from "@/components/nav-slider"
+import { Pagination } from "swiper/modules"
 import Image from "next/image"
+import "swiper/css/pagination"
 
 export default function ProductImageCarosel() {
   return (
     <Swiper
-      pagination={{ clickable: true }}
+      modules={[Pagination]}
+      pagination={{
+        clickable: true,
+      }}
       scrollbar={{ draggable: true }}
       onSlideChange={() => console.log("slide change")}
       onSwiper={(swiper) => console.log(swiper)}
       className="rounded-md"
     >
+      <div className="absolute flex h-full -left-2 top-0 z-10 items-center">
+        <NavSliderPrev />
+      </div>
       <SwiperSlide>
         <AspectRatio ratio={16 / 13} className="bg-muted">
           <Image
@@ -63,6 +72,9 @@ export default function ProductImageCarosel() {
           />
         </AspectRatio>
       </SwiperSlide>
+      <div className="absolute flex h-full -right-2 top-0 z-10 items-center">
+        <NavSliderNext />
+      </div>
     </Swiper>
   )
 }

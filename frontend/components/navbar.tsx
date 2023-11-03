@@ -30,21 +30,24 @@ import {
 
 export default function Navbar() {
   return (
-    <nav className="bg-foreground sticky top-0 z-50">
+    <nav className="bg-background/80 backdrop-blur-lg sticky top-0 z-50">
       <div className="flex items-center justify-between p-4 gap-8">
         <div className="flex items-center gap-4 text-lg">
-          <a href="/" className="font-bold text-background">
+          <a href="/" className="font-bold text-foreground">
             Tokopeida
           </a>
         </div>
-        <Input placeholder="Search" />
+        <Input
+          placeholder="Search"
+          className="max-w-4xl bg-background/80 backdrop-blur-lg"
+        />
         <div className="flex items-center gap-4">
           {/* <PopupSignin />
           <PopupSignup /> */}
           <Sheet>
             <SheetTrigger asChild className="cursor-pointer">
               <div className="flex items-center gap-3">
-                <h2 className="text-background">Yanto</h2>
+                <h2 className="text-foreground">Yanto Kucul</h2>
                 <Avatar className="hover:outline outline-2 outline-muted-foreground">
                   <AvatarImage
                     src="https://github.com/shadcn.png"
@@ -117,7 +120,7 @@ export default function Navbar() {
           </Sheet>
         </div>
       </div>
-      {/* <Separator orientation="horizontal" /> */}
+      <Separator orientation="horizontal" />
     </nav>
   )
 }

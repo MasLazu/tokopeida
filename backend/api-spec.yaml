@@ -1,0 +1,635 @@
+openapi: 3.0.0
+info:
+  title: Ecommerce API
+  version: 1.0.0
+  description: UTS workshop pemrograman framework
+servers:
+  - url: https://localhost:8080/api
+tags:
+  - name: user
+  - name: auth 
+  - name: store
+  - name: transaction
+paths:
+  /user:
+    get:
+      tags:
+          - user
+      summary: get list of users
+      responses:
+        '200':
+          description: user data
+          content:
+            application/json:
+              example:
+                - email: example.@gmail.com
+                  firstname: yanto
+                  lastname: kucul
+                  balance: 100000
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+                - email: example.@gmail.com
+                  firstname: yanto
+                  lastname: kucul
+                  balance: 100000
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+    post:
+      tags:
+        - user
+      summary: register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: example.gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: 1235678
+                firstname:
+                  type: string
+                  example: yanto
+                lastname:
+                  type: string
+                  example: kucul
+      responses:
+        '200':
+          description: user data
+          content:
+            application/json:
+              example:
+                email: example.@gmail.com
+                firstname: yanto
+                lastname: kucul
+                balance: 100000
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+  /user/{email}:
+    get:
+      tags:
+        - user
+      summary: get user by email
+      parameters:
+        - name: email
+          in: path
+          description: user email
+          required: true
+          schema:
+            type: string
+            format: email
+            example: example.gmail.com
+      responses:
+        '200':
+          description: user data
+          content:
+            application/json:
+              example:
+                email: example.@gmail.com
+                firstname: yanto
+                lastname: kucul
+                balance: 100000
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '404':
+          description: user not found
+          content:
+            application/json:
+              example:
+                message: user not found
+  /user/current:
+    get:
+      tags:
+        - user
+      summary: get current login user data
+      security:
+        - cookies: [loginAuth]
+      responses:
+        '200':
+            description: user data
+            content:
+              application/json:
+                example:
+                  email: example.@gmail.com
+                  firstname: yanto
+                  lastname: kucul
+                  balance: 100000
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+    put:
+      tags:
+        - user
+      security:
+        - cookies: [loginAuth]
+      summary: update current login user data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: example.gmail.com
+                firstname:
+                  type: string
+                  example: yanto
+                lastname:
+                  type: string
+                  example: kucul
+      responses:
+        '200':
+          description: user data
+          content:
+            application/json:
+              example:
+                email: example.@gmail.com
+                firstname: yanto
+                lastname: kucul
+                balance: 100000
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: example.gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: 1235678
+      responses:
+        '200':
+          description: user data
+          content:
+            application/json:
+              example:
+                email: example.@gmail.com
+                firstname: yanto
+                lastname: kucul
+                balance: 100000
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: guest only operation
+  /auth/logout:
+    post: 
+      tags:
+        - auth
+      summary: logout user
+      security:
+        - cookies: [loginAuth]
+      responses:
+        '200':
+          description: result of operation
+          content:
+            application/json:
+              example:
+                message: logout success
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+  /store:
+    get:
+      tags:
+        - store
+      summary: get list of store
+      responses:
+        '200':
+          description: store data
+          content:
+            application/json:
+              example:
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: store name
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: store name
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+  /store/{store_id}:
+    get:
+      tags:
+        - store
+      summary: get store by id
+      parameters:
+        - name: store_id
+          in: path
+          description: store id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: store data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: store name
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '404':
+          description: store not found
+          content:
+            application/json:
+              example:
+                message: store not found'
+  /store/{store_id}/product:
+    get:
+      tags:
+        - store
+      summary: get product list for store_id store
+      parameters:
+        - name: store_id
+          in: path
+          description: store id
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: product list
+          content:
+            application/json:
+              example:
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: product name
+                  price: 10000
+                  stock: 10
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: product name
+                  price: 10000
+                  stock: 10
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+        '404':
+          description: store not found
+          content:
+            application/json:
+              example:
+                message: store not found
+  /store/current:
+    get:
+      tags:
+        - store
+      summary: get current login store data
+      security:
+        - cookies: [loginAuth]
+      responses:
+        '200':
+          description: product list
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: store name
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '404':
+          description: store not found
+          content:
+            application/json:
+              example:
+                message: store not found
+    post: 
+      tags:
+        - store
+      summary: create new store for current login user
+      security:
+        - cookies: [loginAuth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: store name
+      responses:
+        '200':
+          description: store data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: store name
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+    put:
+      tags:
+        - store
+      summary: update current login store data
+      security:
+        - cookies: [loginAuth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: store name
+      responses:
+        '200':
+          description: store data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: store name
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+  /product:
+    get:
+      tags:
+        - product
+      summary: get all product
+      responses:
+        '200':
+          description: product list
+          content:
+            application/json:
+              example: 
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: product name
+                  price: 10000
+                  stock: 10
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  name: product name
+                  price: 10000
+                  stock: 10
+                  created_at: 2021-10-10T00:00:00Z
+                  updated_at: 2021-10-10T00:00:00Z
+    post:
+      tags:
+        - product
+      security:
+        - cookies: [loginAuth]
+      summary: add new product to current login store
+      responses:
+        '200': 
+          description: product data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: product name
+                price: 10000
+                stock: 10
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+        '404':
+          description: message
+          content: 
+            application/json:
+              example:
+                message: store not found, please create store before adding new product
+  /product/{id}:
+    get:
+      tags:
+        - product
+      summary: get product by id
+      responses:
+        '200':
+          description: product data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: product name
+                price: 10000
+                stock: 10
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '404':
+          description: message
+          content: 
+            application/json:
+              example:
+                message: product not found
+    put:
+      tags:
+        - product
+      security:
+        - cookies: [loginAuth]
+      summary: update product data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: string
+                  format: uuid
+                  example: 550e8400-e29b-41d4-a716-446655440000
+                name:
+                  type: string
+                  example: product name
+                price: 
+                  type: number
+                  example: 10000
+                stock:
+                  type: integer
+                  example: 10
+      responses:
+        '200':
+          description: product data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: product name
+                price: 10000
+                stock: 10
+                created_at: 2021-10-10T00:00:00Z
+                updated_at: 2021-10-10T00:00:00Z
+        '401':
+          description: message
+          content:
+            application/json:
+              examples:
+                guest:
+                  summary: not login user responses
+                  value:
+                    message: operation requires login
+                not owned /product:
+                  summary: try to update product data from some one else store_id
+                  value: 
+                    message: this product is not from your store
+  /product/{id}/buy:
+    post: 
+      tags:
+        - product
+      security:
+        - cookies: [loginAuth]
+      summary: buy a product
+      responses:
+        '200':
+          description: transaction data
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                user_email: example.gmail.com
+                product_id: 550e8400-e29b-41d4-a716-446655440000
+                quantity: 1
+        '402':
+          description: message
+          content:
+            application/json:
+              example:
+                message: your account balance is not enough to complete the purchase
+        '401':
+          description: message
+          content:
+            application/json:
+              examples:
+                guest:
+                  summary: not login user responses
+                  value:
+                    message: operation requires login
+                buy owned product:
+                  summary: try to buy their own product
+                  value:
+                    message: buy owned product is not allowed
+  /transaction:
+    get:
+      tags:
+        - transaction
+      summary: get all transaction history
+      responses:
+        '200':
+          description: list of transaction
+          content:
+            application/json:
+              example:
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  user_email: example.gmail.com
+                  product_id: 550e8400-e29b-41d4-a716-446655440000
+                  quantity: 1
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  user_email: example.gmail.com
+                  product_id: 550e8400-e29b-41d4-a716-446655440000
+                  quantity: 2
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+  /transaction/current:
+    get:
+      tags:
+        - transaction
+      security:
+        - cookies: [loginAuth]
+      summary: get all current user transaction history
+      responses:
+        '200':
+          description: list of transaction
+          content:
+            application/json:
+              example:
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  user_email: example.gmail.com
+                  product_id: 550e8400-e29b-41d4-a716-446655440000
+                  quantity: 1
+                - id: 550e8400-e29b-41d4-a716-446655440000
+                  user_email: example.gmail.com
+                  product_id: 550e8400-e29b-41d4-a716-446655440000
+                  quantity: 2
+        '401':
+          description: message
+          content:
+            application/json:
+              example:
+                message: operation requires login
+  /transaction{id}:
+    get:
+      tags:
+        - transaction
+      security:
+        - cookies: [loginAuth]
+      summary: get transaction history by id
+      responses:
+        '200':
+          description: list of transaction
+          content:
+            application/json:
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                user_email: example.gmail.com
+                product_id: 550e8400-e29b-41d4-a716-446655440000
+                quantity: 1

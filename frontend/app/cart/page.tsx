@@ -5,16 +5,19 @@ import { Separator } from "@/components/ui/separator"
 import StoreItems from "@/components/cart/store-items"
 import { Button } from "@/components/ui/button"
 import PageTransition from "@/components/page-pransition"
+import ProductSlider from "@/components/product-slider"
 
 export default function StorePage() {
   return (
     <>
       <Navbar />
       <PageTransition>
-        <div className="flex justify-center p-5 mt-4">
-          <main className="container grid grid-cols-7 gap-8">
+        <div className="flex justify-center md:p-5 sm:p-3 mt-4">
+          <main className="container lg:grid lg:grid-cols-7 gap-x-8">
             <Card className="col-span-5 p-5">
-              <h1 className="text-2xl font-semibold mb-5">Shopping Cart</h1>
+              <h1 className="m:text-2xl text-xl font-semibold mb-5">
+                Shopping Cart
+              </h1>
               <div className="flex gap-5">
                 <div className="flex items-center space-x-2">
                   <Checkbox id="select-all" />
@@ -29,7 +32,7 @@ export default function StorePage() {
               <StoreItems />
               <StoreItems />
             </Card>
-            <Card className="col-span-2 p-5 self-start">
+            <Card className="col-span-2 p-5 self-start mt-6 lg:mt-0">
               <h2 className="text-xl font-semibold">Summary</h2>
               <Separator className="my-4" />
               <div className="flex flex-col gap-3">
@@ -53,6 +56,11 @@ export default function StorePage() {
               </div>
               <Button className="w-full mt-5">Buy</Button>
             </Card>
+            <ProductSlider
+              title="Make your wishlist come true"
+              className="col-span-7"
+            />
+            <ProductSlider title="For you" className="col-span-7" />
           </main>
         </div>
       </PageTransition>

@@ -21,7 +21,7 @@ export default function HomeCarosel() {
         onSlideChange={() => console.log("slide change")}
         onSwiper={(swiper) => console.log(swiper)}
       >
-        <div className="absolute flex h-full left-3 top-0 z-10 items-center">
+        <div className="absolute flex h-full md:left-3 left-1 top-0 z-10 items-center">
           <NavSliderPrev />
         </div>
         <SwiperSlide>
@@ -78,7 +78,7 @@ export default function HomeCarosel() {
             ></Image>
           </AspectRatio>
         </SwiperSlide>
-        <div className="absolute flex h-full right-3 top-0 z-10 items-center">
+        <div className="absolute flex h-full md:right-3 right-1 top-0 z-10 items-center">
           <NavSliderNext />
         </div>
       </Swiper>

@@ -24,9 +24,9 @@ export function NavSliderNext({ className }: { className?: string }) {
       variant="outline"
       size="icon"
       onClick={() => swiper.slideNext()}
-      className={cn(className)}
+      className={cn("lg:h-10 lg:w-10 w-8 h-8 ", className)}
     >
-      <GrFormNext className="text-3xl" />
+      <GrFormNext className="lg:text-3xl md:text-2xl text-xl" />
     </Button>
   )
 }
@@ -38,9 +38,9 @@ export function NavSliderPrev({ className }: { className?: string }) {
       variant="outline"
       size="icon"
       onClick={() => swiper.slidePrev()}
-      className={cn(className)}
+      className={cn("lg:h-10 lg:w-10 w-8 h-8", className)}
     >
-      <GrFormPrevious className="text-3xl " />
+      <GrFormPrevious className="lg:text-3xl md:text-2xl text-xl" />
     </Button>
   )
 }

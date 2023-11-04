@@ -46,7 +46,7 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 99,
     },
     {
       title: "EIGER HELICON WATCH - Olive",
@@ -68,7 +68,7 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 99,
     },
     {
       title: "EIGER HELICON WATCH - Olive",
@@ -90,7 +90,7 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 99,
     },
   ]
 
@@ -100,7 +100,7 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
 
   return (
     <div className={cn("row pt-5", className)}>
-      <h3 className="text-xl font-semibold my-2">{title}</h3>
+      <h3 className="md:text-xl text-lg font-semibold my-2">{title}</h3>
       {productData.length === 0 ? (
         <div className="grid grid-cols-7 gap-4 mb-5">
           {new Array(7).fill(0).map((_, i) => (
@@ -109,8 +109,34 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
         </div>
       ) : (
         <Swiper
-          slidesPerView={7}
-          spaceBetween={16}
+          slidesPerView={3}
+          spaceBetween={6}
+          breakpoints={{
+            427: {
+              slidesPerView: 3,
+              spaceBetween: 13,
+            },
+            640: {
+              slidesPerView: 3,
+              spaceBetween: 16,
+            },
+            768: {
+              slidesPerView: 4,
+              spaceBetween: 15,
+            },
+            800: {
+              slidesPerView: 4,
+              spaceBetween: 18,
+            },
+            1024: {
+              slidesPerView: 6,
+              spaceBetween: 22,
+            },
+            1536: {
+              slidesPerView: 7,
+              spaceBetween: 16,
+            },
+          }}
           onSlideChange={() => console.log("slide change")}
           onSwiper={(swiper) => console.log(swiper)}
         >

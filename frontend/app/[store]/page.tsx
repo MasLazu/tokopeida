@@ -13,12 +13,12 @@ export default function StorePage({ params }: { params: { store: string } }) {
     <>
       <Navbar />
       <PageTransition>
-        <div className="flex justify-center p-5">
+        <div className="flex justify-center mt-5 md:p-5 sm:p-3">
           <main className="container">
             <Card className="p-7">
               <div className="flex md:justify-between items-center">
                 <div className="left flex gap-7">
-                  <Avatar className="w-32 h-32">
+                  <Avatar className="sm:w-32 sm:h-32 h-16 w-16">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
                       alt="@shadcn"
@@ -34,7 +34,7 @@ export default function StorePage({ params }: { params: { store: string } }) {
                         jakarta Utara
                       </p>
                     </div>
-                    <div className="action grid grid-cols-7 gap-3">
+                    <div className="action sm:grid grid-cols-7 gap-3 hidden">
                       <Button className="col-span-3">Follow</Button>
                       <Button variant="outline" className="col-span-3">
                         Message
@@ -68,6 +68,17 @@ export default function StorePage({ params }: { params: { store: string } }) {
                     followers
                   </div>
                 </div>
+              </div>
+              <div className="action grid grid-cols-5 gap-3 sm:hidden mt-4">
+                <Button className="col-span-2" size="sm">
+                  Follow
+                </Button>
+                <Button variant="outline" className="col-span-2" size="sm">
+                  Message
+                </Button>
+                <Button variant="outline" size="sm">
+                  <BsShare className="w-4 h-4 text-foreground" />
+                </Button>
               </div>
             </Card>
             <ProductSlider title="Best Selling Products" />

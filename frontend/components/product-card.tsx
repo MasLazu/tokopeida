@@ -20,7 +20,7 @@ export default function ProductCard({
   sold,
 }: ProductCardProps) {
   return (
-    <Card className="w-44">
+    <Card className="lg:w-44 md:w-[10.5rem] sm:w-[8.5rem] xs:w-[7.3rem] w-[6.8rem]">
       <AspectRatio ratio={16 / 13} className="bg-muted">
         <Image
           src={img}
@@ -30,17 +30,17 @@ export default function ProductCard({
         />
       </AspectRatio>
       <div className="p-3 flex flex-col gap-2">
-        <h3 className="text-sm leading-none text-muted-foreground tracking-tight truncate">
+        <h3 className="sm:text-sm text-xs leading-none text-muted-foreground tracking-tight truncate">
           {title}
         </h3>
-        <p className="text-md font-semibold">Rp. {price}</p>
+        <p className="sm:text-md text-sm font-semibold truncate">Rp. {price}</p>
         <div className="grid grid-cols-11 gap-2">
-          <div className="bg-amber-400 px-2 rounded-full flex text-white items-center justify-center gap-1 col-span-5 text-xs py-1">
-            <FaStar className="text-white w-3 h-3]" />
+          <div className="bg-amber-400 px-2 rounded-full flex text-white items-center justify-center gap-1 sm:col-span-5 col-span-4 sm:text-xs text-[0.6rem] sm:py-1 py-[0.1rem]">
+            <FaStar className="text-white w-3 h-3 sm:block hidden" />
             {rating}
           </div>
           <Separator orientation="vertical" />
-          <div className="text-xs text-slate-600 col-span-5 flex items-center justify-center">
+          <div className="md:text-xs sm:text-[0.7rem] text-[0.6rem] leading-3 text-slate-600 sm:col-span-5 col-span-6 flex items-center justify-center">
             Sold {sold}
           </div>
         </div>

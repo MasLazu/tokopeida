@@ -27,7 +27,7 @@ export default function Home() {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 108,
     },
     {
       title: "EIGER HELICON WATCH - Olive",
@@ -49,7 +49,7 @@ export default function Home() {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 108,
     },
     {
       title: "EIGER HELICON WATCH - Olive",
@@ -71,7 +71,7 @@ export default function Home() {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 108,
     },
     {
       title: "EIGER HELICON WATCH - Olive",
@@ -93,21 +93,21 @@ export default function Home() {
       img: "https://images.tokopedia.net/img/cache/900/VqbcmM/2023/8/4/126f961d-1185-419f-a384-d16f93330c6d.jpg",
       price: 174000,
       rating: 4.9,
-      sold: 1086,
+      sold: 108,
     },
   ]
   return (
     <>
       <Navbar />
       <PageTransition>
-        <div className="flex justify-center p-5 mt-3">
+        <div className="flex justify-center md:p-5 sm:p-3 mt-3">
           <main className="container">
             <HomeCarosel />
             <ProductSlider title="Based on your Search" />
             <ProductSlider title="Following" />
             <div className="row pt-5">
               <h3 className="text-xl font-semibold my-2">For You</h3>
-              <div className="grid grid-cols-7 gap-4 mb-5">
+              <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 gap-4 mb-5">
                 {productDataDummy.map((product, index) => (
                   <Link
                     href={`/yanto-store/${product.title.replace(

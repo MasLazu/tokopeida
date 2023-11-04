@@ -27,19 +27,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import Link from "next/link"
 
 export default function Navbar() {
   return (
     <nav className="bg-background/80 backdrop-blur-lg sticky top-0 z-50">
       <div className="flex items-center justify-between p-4 gap-8">
-        <div className="flex items-center gap-4 text-lg">
-          <a href="/" className="font-bold text-foreground">
-            Tokopeida
-          </a>
-        </div>
+        <Link href="/" className="font-bold hidden sm:block text-foreground">
+          Tokopeida
+        </Link>
         <Input
           placeholder="Search"
-          className="max-w-4xl bg-background/80 backdrop-blur-lg"
+          className="lg:max-w-4xl bg-background/80 backdrop-blur-lg"
         />
         <div className="flex items-center gap-4">
           {/* <PopupSignin />
@@ -47,7 +46,9 @@ export default function Navbar() {
           <Sheet>
             <SheetTrigger asChild className="cursor-pointer">
               <div className="flex items-center gap-3">
-                <h2 className="text-foreground">Yanto Kucul</h2>
+                <h2 className="text-foreground sm:text-base text-sm">
+                  Yanto Kucul
+                </h2>
                 <Avatar className="hover:outline outline-2 outline-muted-foreground">
                   <AvatarImage
                     src="https://github.com/shadcn.png"

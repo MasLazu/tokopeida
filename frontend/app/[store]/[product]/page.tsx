@@ -19,17 +19,19 @@ export default function ProductPage({
     <>
       <Navbar />
       <PageTransition>
-        <div className="flex justify-center p-5 mt-4">
-          <main className="container grid grid-cols-2 gap-x-24">
+        <div className="flex justify-center md:p-5 sm:p-3 mt-4">
+          <main className="container lg:grid lg:grid-cols-2 xl:gap-x-24 gap-x-12">
             <div>
               <Card>
                 <ProductImageCarosel />
               </Card>
             </div>
-            <div className="info">
-              <h1 className="text-3xl font-semibold mb-2">{params.product}</h1>
-              <div className="flex gap-6 items-center">
-                <div className="flex gap-2">
+            <div className="info lg:mt-0 md:mt-6 mt-4">
+              <h1 className="md:text-3xl text-2xl font-semibold mb-2">
+                {params.product}
+              </h1>
+              <div className="flex md:gap-6 gap-4 items-center">
+                <div className="flex md:gap-2 gap-1">
                   <FaStar className="text-amber-400 w-5 h-5" />
                   <FaStar className="text-amber-400 w-5 h-5" />
                   <FaStar className="text-amber-400 w-5 h-5" />
@@ -39,17 +41,14 @@ export default function ProductPage({
                 <Separator orientation="vertical" className="h-6" />
                 <p className="text-md text-slate-600">200+ sold</p>
               </div>
-              <h2 className="text-5xl font-semibold my-8">Rp.490.000</h2>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Suscipit nesciunt tempore, fuga omnis sunt tempora recusandae
-                sit quas a eos reiciendis esse dignissimos nam voluptas minus
-                laboriosam iusto ipsam commodi in, voluptates accusamus,
-                voluptatibus natus. Earum adipisci cumque veniam libero aperiam
-                recusandae quo labore rerum, doloremque nobis sunt mollitia
-                nihil reiciendis sed ea consequatur.
-              </p>
-              <div className="flex gap-4 items-center my-8">
+              <h2 className="md:text-5xl text-4xl font-semibold my-8">
+                Rp.490.000
+              </h2>
+              <div className="grid grid-cols-2 gap-4 md:hidden mb-8">
+                <Button>Buy Now</Button>
+                <Button variant="outline">Add to Cart</Button>
+              </div>
+              <div className="flex gap-4 items-center my-6 md:hidden">
                 <Avatar className="w-14 h-14">
                   <AvatarImage
                     src="https://github.com/shadcn.png"
@@ -66,14 +65,40 @@ export default function ProductPage({
                 </Button>
                 <Button variant="outline">Follow</Button>
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-8">
+              <p>
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                Suscipit nesciunt tempore, fuga omnis sunt tempora recusandae
+                sit quas a eos reiciendis esse dignissimos nam voluptas minus
+                laboriosam iusto ipsam commodi in, voluptates accusamus,
+                voluptatibus natus. Earum adipisci cumque veniam libero aperiam
+                recusandae quo labore rerum, doloremque nobis sunt mollitia
+                nihil reiciendis sed ea consequatur.
+              </p>
+              <div className="md:flex hidden gap-4 items-center my-8">
+                <Avatar className="w-14 h-14">
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div className="info flex-grow">
+                  <h3 className="text-xl font-semibold">{params.store}</h3>
+                  <p className="text-md text-muted-foreground">jakarta Utara</p>
+                </div>
+                <Button variant="outline" size="icon">
+                  <HiMiniChatBubbleLeftRight className="text-foreground h-4 w-4" />
+                </Button>
+                <Button variant="outline">Follow</Button>
+              </div>
+              <div className="md:grid hidden grid-cols-2 gap-4 mt-8">
                 <Button size="lg">Buy Now</Button>
-                <Button variant="secondary" size="lg">
+                <Button variant="outline" size="lg">
                   Add to Cart
                 </Button>
               </div>
             </div>
-            <div className="user-reviews col-span-2 grid grid-cols-3 gap-x-16">
+            <div className="user-reviews col-span-2 md:grid md:grid-cols-3 gap-x-16">
               <h2 className="col-span-3 text-2xl font-semibold mt-9 mb-8">
                 User Reviews
               </h2>
@@ -153,7 +178,7 @@ export default function ProductPage({
                       </Avatar>
                       <span className="font-semibold text-lg">Rizaldy</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex md:gap-2 gap-1">
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
@@ -179,7 +204,7 @@ export default function ProductPage({
                       </Avatar>
                       <span className="font-semibold text-lg">Rangga</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex md:gap-2 gap-1">
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
@@ -204,7 +229,7 @@ export default function ProductPage({
                       </Avatar>
                       <span className="font-semibold text-lg">Eric</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex md:gap-2 gap-1">
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
@@ -232,7 +257,7 @@ export default function ProductPage({
                       </Avatar>
                       <span className="font-semibold text-lg">Yanto</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex md:gap-2 gap-1">
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-amber-400 w-5 h-5" />
                       <FaStar className="text-slate-200 w-5 h-5" />

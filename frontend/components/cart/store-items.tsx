@@ -8,7 +8,7 @@ export default function StoreItems() {
     <>
       <Separator className="my-4" />
       <div className="flex flex-col gap-5">
-        <div className="store p-2 flex flex-col gap-3">
+        <div className="store p-2 flex flex-col gap-4 overflow-hidden">
           <div className="row flex items-center gap-5">
             <Checkbox id="select-all" />
             <div className="text-sm">

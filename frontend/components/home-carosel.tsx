@@ -18,8 +18,6 @@ export default function HomeCarosel() {
         autoplay={{ delay: 5000 }}
         pagination={{ clickable: true }}
         loop={true}
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         <div className="absolute flex h-full md:left-3 left-1 top-0 z-10 items-center">
           <NavSliderPrev />

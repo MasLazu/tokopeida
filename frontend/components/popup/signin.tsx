@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,12 +10,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import SignInFrom from "@/components/form/signin"
+import { useState } from "react"
 
 export default function PopupSignin() {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
-        <Button>Sign in</Button>
+        <Button size="sm">Sign in</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="mb-6">
@@ -22,7 +27,7 @@ export default function PopupSignin() {
             Enter your credentilas below to sign in
           </DialogDescription>
         </DialogHeader>
-        <SignInFrom />
+        <SignInFrom stateSetter={setIsOpen} />
       </DialogContent>
     </Dialog>
   )

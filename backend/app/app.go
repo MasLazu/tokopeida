@@ -35,6 +35,7 @@ func NewApp() *App {
 	productHandler := handler.NewProductHandler(database, validator, productService)
 	transactionHandler := handler.NewTransactionHandler(database, validator)
 	authMiddleware := middleware.NewAuthMiddleware(config.Jwt)
+	corsMiddleware := middleware.NewCorsMiddleware(config.Domain)
 	instance := echo.New()
 	SetupRoute(
 		instance,
@@ -44,6 +45,7 @@ func NewApp() *App {
 		productHandler,
 		transactionHandler,
 		authMiddleware,
+		corsMiddleware,
 	)
 
 	return &App{

@@ -10,6 +10,7 @@ import (
 )
 
 type Config struct {
+	Domain      string
 	DatabaseUrl string
 	Port        string
 	Jwt         echojwt.Config
@@ -19,6 +20,7 @@ func NewConfig() *Config {
 	return &Config{
 		DatabaseUrl: os.Getenv("DATABASE_URL"),
 		Port:        os.Getenv("PORT"),
+		Domain:      os.Getenv("DOMAIN"),
 		Jwt: echojwt.Config{
 			NewClaimsFunc: func(c echo.Context) jwt.Claims {
 				return new(helper.JwtCustomClaims)

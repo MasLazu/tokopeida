@@ -13,7 +13,9 @@ export default function PopupSignup() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Sign up</Button>
+        <Button variant="outline" size="sm">
+          Sign up
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="mb-6">

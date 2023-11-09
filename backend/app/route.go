@@ -15,7 +15,10 @@ func SetupRoute(
 	productHandler *handler.ProductHandler,
 	transactionHandler *handler.TransactionHandler,
 	authMiddleware *middleware.AuthMiddleware,
+	corsMiddleware *middleware.CorsMiddleware,
 ) {
+	corsMiddleware.Cors(e)
+
 	auth := e.Group("/auth")
 	auth.POST("/login", authHandler.Login)
 	auth.POST("/logout", authHandler.Logout, authMiddleware.LoginOnly)

@@ -48,11 +48,13 @@ func GenerateJwtToken(email string, jwtKey []byte) (string, error) {
 }
 
 func AssignRefreshTokenCookes(token string, c echo.Context) {
-	cookie := new(http.Cookie)
-	cookie.Name = "refresh_token"
-	cookie.Value = token
-	cookie.Expires = time.Now().Add(time.Hour * 24 * 30)
-	cookie.HttpOnly = true
+	cookie := &http.Cookie{
+		Name:     "refresh_token",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		HttpOnly: true,
+		Path:     "/",
+	}
 	c.SetCookie(cookie)
 }
 

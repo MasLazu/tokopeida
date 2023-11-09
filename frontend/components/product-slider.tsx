@@ -137,8 +137,6 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
               spaceBetween: 16,
             },
           }}
-          onSlideChange={() => console.log("slide change")}
-          onSwiper={(swiper) => console.log(swiper)}
         >
           <div className="absolute flex h-full -left-3 top-0 z-10 items-center">
             <NavSliderPrev />

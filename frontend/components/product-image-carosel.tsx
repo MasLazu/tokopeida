@@ -11,12 +11,8 @@ export default function ProductImageCarosel() {
   return (
     <Swiper
       modules={[Pagination]}
-      pagination={{
-        clickable: true,
-      }}
+      pagination={{ clickable: true }}
       scrollbar={{ draggable: true }}
-      onSlideChange={() => console.log("slide change")}
-      onSwiper={(swiper) => console.log(swiper)}
       className="rounded-md"
     >
       <div className="absolute flex h-full -left-2 top-0 z-10 items-center">

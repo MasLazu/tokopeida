@@ -54,6 +54,7 @@ func AssignRefreshTokenCookes(token string, c echo.Context) {
 		Expires:  time.Now().Add(time.Hour * 24 * 30),
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteStrictMode,
 	}
 	c.SetCookie(cookie)
 }

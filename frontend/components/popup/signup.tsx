@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -10,8 +11,10 @@ import {
 import SignUpFrom from "@/components/form/signup"
 
 export default function PopupSignup() {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           Sign up
@@ -24,7 +27,7 @@ export default function PopupSignup() {
             Fill form below with your data to create an account
           </DialogDescription>
         </DialogHeader>
-        <SignUpFrom />
+        <SignUpFrom stateSetter={setIsOpen} />
       </DialogContent>
     </Dialog>
   )

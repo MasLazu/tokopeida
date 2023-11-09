@@ -56,7 +56,6 @@ export default function SignInFrom({
     const formData = new FormData()
     formData.append("email", values.email)
     formData.append("password", values.password)
-    console.log(formData)
 
     try {
       const accessToken = (
@@ -78,17 +77,21 @@ export default function SignInFrom({
         createdAt: new Date(user.created_at),
         updatedAt: new Date(user.updated_at),
       })
-      console.log(user)
+      toast({
+        title: "Sign in Success",
+        description: `Hello ${user.first_name} ${user.last_name}, welcome to Tokopeida!`,
+      })
+      if (stateSetter) stateSetter(false)
     } catch (error) {
       console.log(error)
+      toast({
+        variant: "destructive",
+        title: "Sign in Failed",
+        description: `Please check your email and password`,
+      })
     }
 
     setIsLoading(false)
-    if (stateSetter) stateSetter(false)
-    toast({
-      title: "Auth: Sign in Success",
-      description: "You have successfully signed in",
-    })
   }
 
   return (

@@ -110,6 +110,7 @@ export default function Home() {
               <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 gap-4 mb-5">
                 {productDataDummy.map((product, index) => (
                   <Link
+                    key={index}
                     href={`/yanto-store/${product.title.replace(
                       /\s+|\//g,
                       "-"

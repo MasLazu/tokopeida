@@ -19,8 +19,10 @@ type App struct {
 
 func NewApp() *App {
 	err := godotenv.Load()
-	if err != nil {
-		panic("Error loading .env file")
+	if err != nil &&
+		err.Error() != "open .env: The system cannot find the file specified." &&
+		err.Error() != "open .env: no such file or directory" {
+		panic("Error loading .env file : " + err.Error() + "\n")
 	}
 
 	config := NewConfig()

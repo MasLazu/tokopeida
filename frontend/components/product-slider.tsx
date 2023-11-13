@@ -124,10 +124,6 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
               slidesPerView: 4,
               spaceBetween: 12,
             },
-            800: {
-              slidesPerView: 4,
-              spaceBetween: 16,
-            },
             1024: {
               slidesPerView: 6,
               spaceBetween: 16,

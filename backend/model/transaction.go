@@ -85,9 +85,10 @@ func GetAllTransaction(dbConn DBConn) ([]Transaction, error) {
 
 func GetAllTransactionByUserEmail(dbConn DBConn, email string) ([]Transaction, error) {
 	sql := `SELECT id, user_email, product_id, quantity, created_at
-	FROM transactions`
+	FROM transactions
+	WHERE user_email = $1`
 
-	rows, err := dbConn.Query(sql)
+	rows, err := dbConn.Query(sql, email)
 	if err != nil {
 		return nil, err
 	}

@@ -18,17 +18,20 @@ import { PiMoney } from "react-icons/pi"
 import { LuHistory } from "react-icons/lu"
 import { BsCart4 } from "react-icons/bs"
 import { VscGraph } from "react-icons/vsc"
+import { AiOutlineAppstoreAdd } from "react-icons/ai"
 import { MdOutlineLogout } from "react-icons/md"
 import PopupSignin from "@/components/popup/signin"
 import PopupSignup from "@/components/popup/signup"
 import Link from "next/link"
 import { UserContext } from "@/app/user-provider"
+import { StoreContext } from "@/app/store-profider"
 import { useContext } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
+  const { store, setStore } = useContext(StoreContext)
   const { toast } = useToast()
 
   async function handleSignout() {
@@ -36,6 +39,7 @@ export default function Navbar() {
       await useClientFetch.post("/api/auth/logout")
       sessionStorage.removeItem("access_token")
       setUser(null)
+      setStore(null)
       toast({
         title: "Sign out success",
         description: `You have been signed out`,
@@ -70,7 +74,7 @@ export default function Navbar() {
                   <h2 className="text-foreground sm:text-base text-sm">
                     {user.firstName}
                   </h2>
-                  <Avatar className="hover:outline outline-2 outline-muted-foreground">
+                  <Avatar className="hover:outline outline-2 outline-foreground">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
                       alt="@shadcn"
@@ -111,10 +115,17 @@ export default function Navbar() {
                   </div>
                   <div className="py-2">
                     <ul className="flex flex-col gap-1 text-gray-600">
-                      <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <VscGraph className="text-lg" />
-                        Dashboard Store
-                      </li>
+                      {store ? (
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                          <VscGraph className="text-lg" />
+                          Dashboard Store
+                        </li>
+                      ) : (
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                          <AiOutlineAppstoreAdd className="text-lg" />
+                          Create Store
+                        </li>
+                      )}
                       <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                         <AiOutlineHeart className="text-lg" />
                         Wishlist

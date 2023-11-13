@@ -3,8 +3,10 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import UserProvider from "@/app/user-provider"
+import StoreProvider from "@/app/store-profider"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import { user, userApiResponse } from "@/interfaces/user"
+import { store, storeApiResponse } from "@/interfaces/store"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -40,14 +42,36 @@ export default async function RootLayout({
     }
   }
 
+  let store: store | null = null
+  let storeResponse: storeApiResponse | null = null
+
+  try {
+    storeResponse = (
+      await useServerFetch.get<storeApiResponse>("/api/store/current")
+    ).data
+  } catch (err) {
+    console.log(err)
+  }
+
+  if (storeResponse) {
+    store = {
+      id: storeResponse.id,
+      name: storeResponse.name,
+      createdAt: new Date(storeResponse.created_at),
+      updatedAt: new Date(storeResponse.updated_at),
+    }
+  }
+
   return (
     <html lang="en">
-      <UserProvider initialUser={user}>
-        <body className={inter.className}>
-          {children}
-          <Toaster />
-        </body>
-      </UserProvider>
+      <StoreProvider initialStore={store}>
+        <UserProvider initialUser={user}>
+          <body className={inter.className}>
+            {children}
+            <Toaster />
+          </body>
+        </UserProvider>
+      </StoreProvider>
     </html>
   )
 }

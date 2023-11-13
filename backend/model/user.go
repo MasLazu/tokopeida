@@ -91,6 +91,10 @@ func (u *UserUpdate) ToUser() User {
 	}
 }
 
+type UserTopUp struct {
+	Amount int64 `json:"amount" validate:"required,number"`
+}
+
 func (u *User) Create(dbConn DBConn) error {
 	sql := `INSERT INTO users (email, first_name, last_name, password) 
 	VALUES ($1, $2, $3, $4) 

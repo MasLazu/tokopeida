@@ -14,7 +14,6 @@ import {
 import { FaMoneyBill1Wave } from "react-icons/fa6"
 import { LuSettings2 } from "react-icons/lu"
 import { AiOutlineHeart } from "react-icons/ai"
-import { PiMoney } from "react-icons/pi"
 import { LuHistory } from "react-icons/lu"
 import { BsCart4 } from "react-icons/bs"
 import { VscGraph } from "react-icons/vsc"
@@ -28,6 +27,7 @@ import { StoreContext } from "@/app/store-profider"
 import { useContext } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
+import PopupTopUp from "@/components/popup/topup"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
@@ -130,9 +130,7 @@ export default function Navbar() {
                         <AiOutlineHeart className="text-lg" />
                         Wishlist
                       </li>
-                      <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <PiMoney className="text-lg" /> Top up balance
-                      </li>
+                      <PopupTopUp />
                       <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                         <LuHistory className="text-lg" />
                         Transaction history

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
@@ -98,6 +99,33 @@ func (h *UserHandler) UpdateCurrent(c echo.Context) error {
 	user := updateRequest.ToUser()
 	user.Email = helper.ExtractJwtEmail(c)
 	user.Update(h.database.Conn)
+
+	return c.JSON(http.StatusOK, user)
+}
+
+func (h *UserHandler) TopUp(c echo.Context) error {
+	price, err := strconv.ParseInt(c.FormValue("amount"), 10, 64)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
+	}
+
+	topUpRequest := model.UserTopUp{
+		Amount: price,
+	}
+
+	if err := h.validator.Struct(topUpRequest); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, err := h.authService.CurrentUser(c)
+	if err != nil {
+		return echo.ErrUnauthorized
+	}
+
+	user.Balance += topUpRequest.Amount
+	if err := user.UpdateBalance(h.database.Conn); err != nil {
+		return echo.ErrInternalServerError
+	}
 
 	return c.JSON(http.StatusOK, user)
 }

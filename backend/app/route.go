@@ -30,6 +30,7 @@ func SetupRoute(
 	user.GET("/:email", userHandler.GetByEmail)
 	user.GET("/current", userHandler.GetCurrent, authMiddleware.LoginOnly)
 	user.PUT("/current", userHandler.UpdateCurrent, authMiddleware.LoginOnly)
+	user.POST("/current/topup", userHandler.TopUp, authMiddleware.LoginOnly)
 	user.GET("/current/transaction", transactionHandler.GetAllCurrentUserTransaction, authMiddleware.LoginOnly)
 
 	store := e.Group("/store")

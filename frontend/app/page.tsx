@@ -107,7 +107,7 @@ export default function Home() {
             <ProductSlider title="Following" />
             <div className="row pt-5">
               <h3 className="text-xl font-semibold my-2">For You</h3>
-              <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 gap-4 mb-5">
+              <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 lg:gap-4 gap-3 mb-5">
                 {productDataDummy.map((product, index) => (
                   <Link
                     key={index}

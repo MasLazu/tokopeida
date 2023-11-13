@@ -114,23 +114,23 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
           breakpoints={{
             427: {
               slidesPerView: 3,
-              spaceBetween: 13,
+              spaceBetween: 12,
             },
             640: {
               slidesPerView: 3,
-              spaceBetween: 16,
+              spaceBetween: 12,
             },
             768: {
               slidesPerView: 4,
-              spaceBetween: 15,
+              spaceBetween: 12,
             },
             800: {
               slidesPerView: 4,
-              spaceBetween: 18,
+              spaceBetween: 16,
             },
             1024: {
               slidesPerView: 6,
-              spaceBetween: 22,
+              spaceBetween: 16,
             },
             1536: {
               slidesPerView: 7,

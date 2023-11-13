@@ -24,9 +24,30 @@ import PopupSignup from "@/components/popup/signup"
 import Link from "next/link"
 import { UserContext } from "@/app/user-provider"
 import { useContext } from "react"
+import { useToast } from "@/components/ui/use-toast"
+import { useClientFetch } from "@/hooks/useClientFetch"
 
 export default function Navbar() {
-  const { user } = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext)
+  const { toast } = useToast()
+
+  async function handleSignout() {
+    try {
+      await useClientFetch.post("/api/auth/logout")
+      sessionStorage.removeItem("access_token")
+      setUser(null)
+      toast({
+        title: "Sign out success",
+        description: `You have been signed out`,
+      })
+    } catch (error) {
+      toast({
+        title: "Sign out failed",
+        description: `Something went wrong, please try again later`,
+      })
+      console.log(error)
+    }
+  }
 
   return (
     <nav className="bg-background/80 backdrop-blur-lg sticky top-0 z-50">
@@ -114,6 +135,7 @@ export default function Navbar() {
                 <Button
                   className="flex gap-2 p-2 cursor-pointer w-full"
                   variant="destructive"
+                  onClick={handleSignout}
                 >
                   <MdOutlineLogout className="text-lg" /> Sign Out
                 </Button>

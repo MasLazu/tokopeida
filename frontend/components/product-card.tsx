@@ -20,7 +20,7 @@ export default function ProductCard({
   sold,
 }: ProductCardProps) {
   return (
-    <Card className="lg:w-44 md:w-[10.5rem] sm:w-[8.5rem] xs:w-[7.3rem] w-[6.8rem]">
+    <Card className="w-full">
       <AspectRatio ratio={16 / 13} className="bg-muted">
         <Image
           src={img}

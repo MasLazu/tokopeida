@@ -8,12 +8,12 @@ import { userApiResponse, user } from "@/interfaces/user"
 
 type userContext = {
   user: user | null | undefined
-  setUser: (user: user) => void
+  setUser: (user: user | null) => void
 }
 
 export const UserContext = createContext<userContext>({
   user: null,
-  setUser: () => {},
+  setUser: (user: user | null) => {},
 })
 
 export default function UserProvider({
@@ -25,7 +25,7 @@ export default function UserProvider({
 }) {
   const [user, setUser] = useState<user | null | undefined>(initialUser)
 
-  const userSetter = (user: user) => setUser(user)
+  const userSetter = (user: user | null) => setUser(user)
 
   async function getUser() {
     try {

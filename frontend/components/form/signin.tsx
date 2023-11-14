@@ -14,6 +14,8 @@ import { UserContext } from "@/app/user-provider"
 import { useContext } from "react"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import { userApiResponse } from "@/interfaces/user"
+import { storeApiResponse } from "@/interfaces/store"
+import { StoreContext } from "@/app/store-provider"
 import {
   Form,
   FormField,
@@ -40,6 +42,7 @@ export default function SignInFrom({
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const { setUser } = useContext(UserContext)
+  const { setStore } = useContext(StoreContext)
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,6 +80,17 @@ export default function SignInFrom({
         createdAt: new Date(user.created_at),
         updatedAt: new Date(user.updated_at),
       })
+
+      const storeResponse = (
+        await useClientFetch.get<storeApiResponse>("/api/store/current")
+      ).data
+      setStore({
+        id: storeResponse.id,
+        name: storeResponse.name,
+        createdAt: new Date(storeResponse.created_at),
+        updatedAt: new Date(storeResponse.updated_at),
+      })
+
       toast({
         title: "Sign in Success",
         description: `Hello ${user.first_name} ${user.last_name}, welcome to Tokopeida!`,

@@ -10,10 +10,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/components/ui/use-toast"
 import * as z from "zod"
-import { UserContext } from "@/app/user-provider"
+import { StoreContext } from "@/app/store-provider"
 import { useContext } from "react"
 import { useClientFetch } from "@/hooks/useClientFetch"
-import { userApiResponse } from "@/interfaces/user"
+import { storeApiResponse } from "@/interfaces/store"
 import {
   Form,
   FormField,
@@ -23,20 +23,20 @@ import {
 } from "@/components/ui/form"
 
 const formSchema = z.object({
-  amount: z.string().min(1, { message: "Amount is required" }),
+  name: z.string().min(1, { message: "Name is required" }),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   stateSetter?: (state: boolean) => void
 }
 
-export default function TopUpFrom({
+export default function CreateStoreFrom({
   className,
   stateSetter,
   ...props
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const { user, setUser } = useContext(UserContext)
+  const { setStore } = useContext(StoreContext)
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,31 +47,33 @@ export default function TopUpFrom({
     setIsLoading(true)
 
     const formData = new FormData()
-    formData.append("amount", values.amount)
+    formData.append("name", values.name)
 
     try {
-      const balance = (
-        await useClientFetch.post<userApiResponse>(
-          "/api/user/current/topup",
+      const store = (
+        await useClientFetch.post<storeApiResponse>(
+          "/api/store/current",
           formData
         )
-      ).data.balance
+      ).data
 
-      setUser({
-        ...user!,
-        balance: balance,
+      setStore({
+        id: store.id,
+        name: store.name,
+        createdAt: new Date(store.created_at),
+        updatedAt: new Date(store.updated_at),
       })
 
       toast({
-        title: "Topup Success",
-        description: `Your balance has been topped up by Rp. ${values.amount}`,
+        title: "Create Store Success",
+        description: `Your store has been created with name ${values.name}`,
       })
       if (stateSetter) stateSetter(false)
     } catch (error) {
       console.log(error)
       toast({
         variant: "destructive",
-        title: "Topup Failed",
+        title: "Create Store Failed",
         description: `Something went wrong, please try again later`,
       })
     }
@@ -85,20 +87,20 @@ export default function TopUpFrom({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-5">
             <FormField
-              name="amount"
+              name="name"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="amount" className="text-foreground">
-                    Amount
+                  <FormLabel htmlFor="name" className="text-foreground">
+                    Name
                   </FormLabel>
                   <Input
                     {...field}
-                    id="amount"
-                    type="number"
+                    id="name"
+                    type="text"
                     disabled={isLoading}
                   />
-                  <FormMessage id="amount-message" />
+                  <FormMessage id="name-message" />
                 </FormItem>
               )}
             />
@@ -106,7 +108,7 @@ export default function TopUpFrom({
               {isLoading && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Top Up
+              Create Store
             </Button>
           </div>
         </form>

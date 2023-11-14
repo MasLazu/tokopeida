@@ -23,11 +23,12 @@ import PopupSignin from "@/components/popup/signin"
 import PopupSignup from "@/components/popup/signup"
 import Link from "next/link"
 import { UserContext } from "@/app/user-provider"
-import { StoreContext } from "@/app/store-profider"
+import { StoreContext } from "@/app/store-provider"
 import { useContext } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import PopupTopUp from "@/components/popup/topup"
+import PopupCreateStore from "@/components/popup/create-store"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
@@ -121,10 +122,7 @@ export default function Navbar() {
                           Dashboard Store
                         </li>
                       ) : (
-                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                          <AiOutlineAppstoreAdd className="text-lg" />
-                          Create Store
-                        </li>
+                        <PopupCreateStore />
                       )}
                       <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                         <AiOutlineHeart className="text-lg" />

@@ -102,10 +102,14 @@ export default function ProductSlider({ title, className }: ProductCardProps) {
     <div className={cn("row pt-5", className)}>
       <h3 className="md:text-xl text-lg font-semibold my-2">{title}</h3>
       {productData.length === 0 ? (
-        <div className="grid grid-cols-7 gap-4 mb-5">
-          {new Array(7).fill(0).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
+        <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 lg:gap-4 gap-3 grid-rows-1 mb-5 overflow-hidden">
+          <ProductCardSkeleton />
+          <ProductCardSkeleton />
+          <ProductCardSkeleton />
+          <ProductCardSkeleton className="hidden md:block" />
+          <ProductCardSkeleton className="hidden lg:block" />
+          <ProductCardSkeleton className="hidden lg:block" />
+          <ProductCardSkeleton className="hidden 2xl:block" />
         </div>
       ) : (
         <Swiper

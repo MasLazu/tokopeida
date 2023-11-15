@@ -14,6 +14,7 @@ func SetupRoute(
 	storeHandler *handler.StoreHandler,
 	productHandler *handler.ProductHandler,
 	transactionHandler *handler.TransactionHandler,
+	wishlistHandler *handler.WishlistHandler,
 	authMiddleware *middleware.AuthMiddleware,
 	corsMiddleware *middleware.CorsMiddleware,
 ) {
@@ -50,4 +51,9 @@ func SetupRoute(
 	transaction := e.Group("/transaction")
 	transaction.GET("", transactionHandler.GetAll)
 	transaction.GET("/:id", transactionHandler.GetByID)
+
+	wishlist := e.Group("/wishlist")
+	wishlist.POST("/:product_id", wishlistHandler.Create, authMiddleware.LoginOnly)
+	wishlist.DELETE("/:product_id", wishlistHandler.Delete, authMiddleware.LoginOnly)
+	wishlist.GET("/current", wishlistHandler.GetAllCurrentUser, authMiddleware.LoginOnly)
 }

@@ -114,7 +114,14 @@ func (h *CartHandler) Delete(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, cart)
+	product := model.Product{
+		ID: cart.ProductID,
+	}
+	if err := product.GetByID(h.database.Conn); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
+	return c.JSON(http.StatusOK, product)
 }
 
 func (h *CartHandler) GetAllCurrentUser(c echo.Context) error {

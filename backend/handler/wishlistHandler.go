@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
@@ -43,7 +44,14 @@ func (h *WishlistHandler) Create(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusCreated, wishlist)
+	product = model.Product{
+		ID: wishlist.ProductID,
+	}
+	if err := product.GetByID(h.database.Conn); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
+	return c.JSON(http.StatusCreated, product)
 }
 
 func (h *WishlistHandler) Delete(c echo.Context) error {
@@ -56,16 +64,24 @@ func (h *WishlistHandler) Delete(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, wishlist)
+	product := model.Product{
+		ID: wishlist.ProductID,
+	}
+	if err := product.GetByID(h.database.Conn); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
+	return c.JSON(http.StatusOK, product)
 }
 
 func (h *WishlistHandler) GetAllCurrentUser(c echo.Context) error {
-	wishlists, err := model.GetAllWishlistByUserEmail(
+	wishlists, err := model.GetAllWishlistProductByUserEmail(
 		h.database.Conn,
 		helper.ExtractJwtEmail(c),
 	)
 
 	if err != nil {
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 

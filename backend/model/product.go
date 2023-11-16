@@ -101,6 +101,20 @@ func GetAllProduct(dbConn DBConn) ([]Product, error) {
 	return scanRowsProduct(rows)
 }
 
+func GetAllWishlistProductByUserEmail(dbConn DBConn, email string) ([]Product, error) {
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at 
+	FROM wishlists 
+	INNER JOIN products ON wishlists.product_id = products.id
+	WHERE user_email = $1`
+	rows, err := dbConn.Query(sql, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return scanRowsProduct(rows)
+}
+
 func (p *Product) Create(dbConn DBConn) error {
 	sql := `INSERT INTO products (name, store_id, description, stock, price)
 	VALUES ($1, $2, $3, $4, $5)

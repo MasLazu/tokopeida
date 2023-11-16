@@ -72,7 +72,6 @@ export default async function RootLayout({
           </body>
         </UserProvider>
       </StoreProvider>
-      s
     </html>
   )
 }

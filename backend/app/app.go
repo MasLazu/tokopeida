@@ -36,7 +36,8 @@ func NewApp() *App {
 	storeHandler := handler.NewStoreHandler(database, validator)
 	productHandler := handler.NewProductHandler(database, validator, productService)
 	transactionHandler := handler.NewTransactionHandler(database, validator)
-	wishlistHandler := handler.NewWishlistHandler(database, validator)
+	wishlistHandler := handler.NewWishlistHandler(database)
+	cartHandler := handler.NewCartHandler(database, validator)
 	authMiddleware := middleware.NewAuthMiddleware(config.Jwt)
 	corsMiddleware := middleware.NewCorsMiddleware(config.Domain)
 	instance := echo.New()
@@ -48,6 +49,7 @@ func NewApp() *App {
 		productHandler,
 		transactionHandler,
 		wishlistHandler,
+		cartHandler,
 		authMiddleware,
 		corsMiddleware,
 	)

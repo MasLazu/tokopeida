@@ -58,7 +58,7 @@ func (w *Wishlist) Delete(dbConn DBConn) error {
 	return nil
 }
 
-func GetAllByUserEmail(dbConn DBConn, email string) ([]Wishlist, error) {
+func GetAllWishlistByUserEmail(dbConn DBConn, email string) ([]Wishlist, error) {
 	sql := `SELECT * FROM wishlists WHERE user_email = $1`
 	rows, err := dbConn.Query(sql)
 	if err != nil {

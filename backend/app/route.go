@@ -15,6 +15,7 @@ func SetupRoute(
 	productHandler *handler.ProductHandler,
 	transactionHandler *handler.TransactionHandler,
 	wishlistHandler *handler.WishlistHandler,
+	cartHandler *handler.CartHandler,
 	authMiddleware *middleware.AuthMiddleware,
 	corsMiddleware *middleware.CorsMiddleware,
 ) {
@@ -53,7 +54,12 @@ func SetupRoute(
 	transaction.GET("/:id", transactionHandler.GetByID)
 
 	wishlist := e.Group("/wishlist")
+	wishlist.GET("/current", wishlistHandler.GetAllCurrentUser, authMiddleware.LoginOnly)
 	wishlist.POST("/:product_id", wishlistHandler.Create, authMiddleware.LoginOnly)
 	wishlist.DELETE("/:product_id", wishlistHandler.Delete, authMiddleware.LoginOnly)
-	wishlist.GET("/current", wishlistHandler.GetAllCurrentUser, authMiddleware.LoginOnly)
+
+	cart := e.Group("/cart")
+	cart.POST("", cartHandler.Create, authMiddleware.LoginOnly)
+	cart.GET("/current", cartHandler.GetAllCurrentUser, authMiddleware.LoginOnly)
+	cart.DELETE("/:product_id", cartHandler.Delete, authMiddleware.LoginOnly)
 }

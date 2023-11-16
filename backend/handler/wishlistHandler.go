@@ -1,26 +1,24 @@
 package handler
 
 import (
+	"net/http"
 	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 )
 
 type WishlistHandler struct {
-	database  *database.Database
-	validator *validator.Validate
+	database *database.Database
 }
 
 func NewWishlistHandler(
 	database *database.Database,
-	validator *validator.Validate,
 ) *WishlistHandler {
 	return &WishlistHandler{
-		database:  database,
-		validator: validator,
+		database: database,
 	}
 }
 
@@ -30,7 +28,7 @@ func (h *WishlistHandler) Create(c echo.Context) error {
 	}
 
 	if err := product.GetByID(h.database.Conn); err != nil {
-		return echo.NewHTTPError(404, "Product not found")
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
 	wishlist := model.Wishlist{
@@ -39,10 +37,13 @@ func (h *WishlistHandler) Create(c echo.Context) error {
 	}
 
 	if err := wishlist.Create(h.database.Conn); err != nil {
+		if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" {
+			return echo.NewHTTPError(http.StatusBadRequest, "Product already in wishlist")
+		}
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(201, wishlist)
+	return c.JSON(http.StatusCreated, wishlist)
 }
 
 func (h *WishlistHandler) Delete(c echo.Context) error {
@@ -55,11 +56,11 @@ func (h *WishlistHandler) Delete(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(200, wishlist)
+	return c.JSON(http.StatusOK, wishlist)
 }
 
 func (h *WishlistHandler) GetAllCurrentUser(c echo.Context) error {
-	wishlists, err := model.GetAllByUserEmail(
+	wishlists, err := model.GetAllWishlistByUserEmail(
 		h.database.Conn,
 		helper.ExtractJwtEmail(c),
 	)
@@ -68,5 +69,5 @@ func (h *WishlistHandler) GetAllCurrentUser(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(200, wishlists)
+	return c.JSON(http.StatusOK, wishlists)
 }

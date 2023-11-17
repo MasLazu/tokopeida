@@ -47,10 +47,13 @@ export default function Sidebar({ className }: { className?: string }) {
 
   return (
     <div className={cn("border-r p-4 h-full flex flex-col", className)}>
-      <div className="font-bold hidden sm:block text-foreground text-xl mb-6">
+      <Link
+        href={navItems[0].href}
+        className="font-bold hidden sm:block text-foreground text-xl mb-6"
+      >
         Tokopeida{" "}
         <span className="text-muted-foreground text-sm font-light">Store</span>
-      </div>
+      </Link>
       <div className="flex items-center justify-between gap-3 mb-10">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
@@ -100,7 +103,7 @@ export default function Sidebar({ className }: { className?: string }) {
           className="flex gap-2 p-2 cursor-pointer w-full"
           variant="destructive"
         >
-          <MdOutlineLogout className="text-lg" /> Sign Out
+          <MdOutlineLogout className="text-lg" /> Quit Dashboard
         </Button>
       </div>
     </div>

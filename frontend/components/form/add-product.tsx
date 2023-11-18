@@ -127,7 +127,12 @@ export default function AddProductFrom({
         await useClientFetch.post<any>("/api/store/current/product", formData)
       ).data
 
-      console.log(response)
+      toast({
+        title: "Add Product Success",
+        description: `Product ${response.name} has been added`,
+      })
+
+      if (stateSetter) stateSetter(false)
     } catch (error) {
       console.log(error)
       toast({

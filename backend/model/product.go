@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"mime/multipart"
 	"time"
 )
 
@@ -12,6 +13,7 @@ type Product struct {
 	Description string     `json:"description,omitempty"`
 	Stock       int        `json:"stock,omitempty"`
 	Price       int64      `json:"price,omitempty"`
+	Images      []string   `json:"images,omitempty"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
@@ -27,6 +29,35 @@ func (p *Product) scanRow(row *sql.Row) error {
 		&p.CreatedAt,
 		&p.UpdatedAt,
 	)
+}
+
+func (p *Product) scanRowJoinProductImage(rows *sql.Rows) error {
+	var product Product
+
+	for rows.Next() {
+		var p Product
+		var image sql.NullString
+
+		if err := rows.Scan(
+			&p.ID,
+			&p.Name,
+			&p.StoreID,
+			&p.Description,
+			&p.Stock,
+			&p.Price,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&image,
+		); err != nil {
+			return err
+		}
+
+		if image.Valid {
+			product.Images = append(product.Images, image.String)
+			break
+		}
+	}
+	return nil
 }
 
 func scanRowsProduct(rows *sql.Rows) ([]Product, error) {
@@ -54,11 +85,55 @@ func scanRowsProduct(rows *sql.Rows) ([]Product, error) {
 	return products, nil
 }
 
+func scanRowsProductJoinProductImage(rows *sql.Rows) ([]Product, error) {
+	var products []Product
+
+	for rows.Next() {
+		var product Product
+		var image sql.NullString
+
+		if err := rows.Scan(
+			&product.ID,
+			&product.Name,
+			&product.StoreID,
+			&product.Description,
+			&product.Stock,
+			&product.Price,
+			&product.CreatedAt,
+			&product.UpdatedAt,
+			&image,
+		); err != nil {
+			return products, err
+		}
+
+		exist := false
+		if image.Valid {
+			for i, p := range products {
+				if p.ID == product.ID {
+					products[i].Images = append(products[i].Images, image.String)
+					exist = true
+					break
+				}
+			}
+		}
+
+		if !exist {
+			if image.Valid {
+				product.Images = append(product.Images, image.String)
+			}
+			products = append(products, product)
+		}
+	}
+
+	return products, nil
+}
+
 type ProductCreate struct {
-	Name        string `json:"name" validate:"required"`
-	Description string `json:"description" validate:"required"`
-	Stock       int    `json:"stock" validate:"required"`
-	Price       int64  `json:"price" validate:"required"`
+	Name        string                  `json:"name" validate:"required"`
+	Description string                  `json:"description" validate:"required"`
+	Stock       int                     `json:"stock" validate:"required"`
+	Price       int64                   `json:"price" validate:"required"`
+	Images      []*multipart.FileHeader `json:"_"`
 }
 
 func (p *ProductCreate) ToProduct() Product {
@@ -99,6 +174,20 @@ func GetAllProduct(dbConn DBConn) ([]Product, error) {
 	defer rows.Close()
 
 	return scanRowsProduct(rows)
+}
+
+func GetAllProductJoinProductImage(dbConn DBConn) ([]Product, error) {
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	FROM products
+	LEFT JOIN product_images ON products.id = product_images.product_id`
+
+	rows, err := dbConn.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return scanRowsProductJoinProductImage(rows)
 }
 
 func GetAllWishlistProductByUserEmail(dbConn DBConn, email string) ([]Product, error) {

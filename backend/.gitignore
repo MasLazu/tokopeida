@@ -1,3 +1,6 @@
 /target
 
+/static/product_images/*
+/static/photo_profile/*
+
 .env

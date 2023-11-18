@@ -9,25 +9,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import SignInFrom from "@/components/form/signin"
+import AddProductFrom from "../form/add-product"
 import { useState } from "react"
 
-export default function SigninPopup() {
+export default function AddProductPopup() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">Sign in</Button>
+        <Button>+ Add Product</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader className="mb-6">
-          <DialogTitle className="text-2xl">Sign in</DialogTitle>
+          <DialogTitle className="text-2xl">Add Product</DialogTitle>
           <DialogDescription>
-            Enter your credentilas below to sign in
+            Fill form below with your product data
           </DialogDescription>
         </DialogHeader>
-        <SignInFrom stateSetter={setIsOpen} />
+        <AddProductFrom stateSetter={setIsOpen} />
       </DialogContent>
     </Dialog>
   )

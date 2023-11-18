@@ -31,8 +31,9 @@ func NewProductHandler(
 }
 
 func (h *ProductHandler) GetAll(c echo.Context) error {
-	products, err := model.GetAllProduct(h.database.Conn)
+	products, err := model.GetAllProductJoinProductImage(h.database.Conn)
 	if err != nil {
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 
@@ -46,6 +47,15 @@ func (h *ProductHandler) GetByID(c echo.Context) error {
 
 	if err := product.GetByID(h.database.Conn); err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	}
+
+	productImages, err := model.GetProductImagesByProductID(h.database.Conn, product.ID)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return echo.ErrInternalServerError
+	}
+
+	for _, productImage := range productImages {
+		product.Images = append(product.Images, productImage.FileName)
 	}
 
 	return c.JSON(http.StatusOK, product)
@@ -62,11 +72,17 @@ func (h *ProductHandler) CreateCurrentStoreProduct(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid stock")
 	}
 
+	form, err := c.MultipartForm()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid image")
+	}
+
 	createRequest := model.ProductCreate{
 		Name:        c.FormValue("name"),
 		Description: c.FormValue("description"),
 		Price:       price,
 		Stock:       int(stock),
+		Images:      form.File["images"],
 	}
 
 	if err := h.validator.Struct(createRequest); err != nil {
@@ -80,6 +96,7 @@ func (h *ProductHandler) CreateCurrentStoreProduct(c echo.Context) error {
 	case nil:
 		return c.JSON(http.StatusCreated, product)
 	default:
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 }

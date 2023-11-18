@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import AddProductPopup from "@/components/popup/add-product"
 
 export default function ProductsDashboard() {
   const products = [
@@ -73,7 +74,7 @@ export default function ProductsDashboard() {
               </SelectContent>
             </Select>
           </div>
-          <Button> + Add Product</Button>
+          <AddProductPopup />
         </div>
         <Card className="p-3">
           <Table>

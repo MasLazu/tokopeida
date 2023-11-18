@@ -11,7 +11,7 @@ import {
 import TopUpFrom from "@/components/form/topup"
 import { useState } from "react"
 
-export default function PopupTopUp() {
+export default function TopUpPopup() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

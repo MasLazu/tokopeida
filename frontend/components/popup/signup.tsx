@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import SignUpFrom from "@/components/form/signup"
 
-export default function PopupSignup() {
+export default function SignupPopup() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

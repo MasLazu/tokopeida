@@ -2,10 +2,14 @@ package service
 
 import (
 	"errors"
+	"io"
+	"log"
+	"os"
 	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -113,6 +117,38 @@ func (s *ProductService) Create(createRequest model.ProductCreate, echoContext e
 
 	if err := product.Create(s.database.Conn); err != nil {
 		return product, err
+	}
+
+	for _, image := range createRequest.Images {
+		fileName := uuid.New().String() + ".jpg"
+
+		src, err := image.Open()
+		if err != nil {
+			return product, err
+		}
+		defer src.Close()
+
+		dst, err := os.Create("./static/product_images/" + fileName)
+		if err != nil {
+			return product, err
+		}
+		defer dst.Close()
+
+		if _, err = io.Copy(dst, src); err != nil {
+			log.Println(err)
+			return product, err
+		}
+
+		productImage := model.ProductImage{
+			FileName:  fileName,
+			ProductID: product.ID,
+		}
+
+		if err := productImage.Create(s.database.Conn); err != nil {
+			return product, err
+		}
+
+		product.Images = append(product.Images, fileName)
 	}
 
 	return product, nil

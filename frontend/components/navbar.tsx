@@ -17,7 +17,6 @@ import { AiOutlineHeart } from "react-icons/ai"
 import { LuHistory } from "react-icons/lu"
 import { BsCart4 } from "react-icons/bs"
 import { VscGraph } from "react-icons/vsc"
-import { AiOutlineAppstoreAdd } from "react-icons/ai"
 import { MdOutlineLogout } from "react-icons/md"
 import PopupSignin from "@/components/popup/signin"
 import PopupSignup from "@/components/popup/signup"
@@ -117,10 +116,12 @@ export default function Navbar() {
                   <div className="py-2">
                     <ul className="flex flex-col gap-1 text-gray-600">
                       {store ? (
-                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                          <VscGraph className="text-lg" />
-                          Dashboard Store
-                        </li>
+                        <Link href="store/dashboard/home">
+                          <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                            <VscGraph className="text-lg" />
+                            Dashboard Store
+                          </li>
+                        </Link>
                       ) : (
                         <PopupCreateStore />
                       )}

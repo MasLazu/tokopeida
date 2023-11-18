@@ -21,6 +21,8 @@ func SetupRoute(
 ) {
 	corsMiddleware.Cors(e)
 
+	e.Static("/assets", "static")
+
 	auth := e.Group("/auth")
 	auth.POST("/login", authHandler.Login)
 	auth.POST("/logout", authHandler.Logout, authMiddleware.LoginOnly)

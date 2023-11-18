@@ -11,7 +11,7 @@ import {
 import CreateStoreFrom from "@/components/form/create-store"
 import { useState } from "react"
 
-export default function PopupCreateStore() {
+export default function CreateStorePopup() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

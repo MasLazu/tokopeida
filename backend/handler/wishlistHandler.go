@@ -1,34 +1,33 @@
 package handler
 
 import (
-	"log"
 	"net/http"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 )
 
 type WishlistHandler struct {
-	database *database.Database
+	productRepository  *repository.ProductRepository
+	wishlistRepository *repository.WishlistRepository
 }
 
 func NewWishlistHandler(
-	database *database.Database,
+	productRepository *repository.ProductRepository,
+	wishlistRepository *repository.WishlistRepository,
 ) *WishlistHandler {
 	return &WishlistHandler{
-		database: database,
+		productRepository:  productRepository,
+		wishlistRepository: wishlistRepository,
 	}
 }
 
 func (h *WishlistHandler) Create(c echo.Context) error {
-	product := model.Product{
-		ID: c.Param("product_id"),
-	}
-
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByID(c.Param("product_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
@@ -37,17 +36,16 @@ func (h *WishlistHandler) Create(c echo.Context) error {
 		ProductID: product.ID,
 	}
 
-	if err := wishlist.Create(h.database.Conn); err != nil {
+	wishlist, err = h.wishlistRepository.Create(wishlist)
+	if err != nil {
 		if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" {
 			return echo.NewHTTPError(http.StatusBadRequest, "Product already in wishlist")
 		}
 		return echo.ErrInternalServerError
 	}
 
-	product = model.Product{
-		ID: wishlist.ProductID,
-	}
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err = h.productRepository.GetByID(wishlist.ProductID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
@@ -60,14 +58,12 @@ func (h *WishlistHandler) Delete(c echo.Context) error {
 		ProductID: c.Param("product_id"),
 	}
 
-	if err := wishlist.Delete(h.database.Conn); err != nil {
+	if err := h.wishlistRepository.Delete(wishlist); err != nil {
 		return echo.ErrInternalServerError
 	}
 
-	product := model.Product{
-		ID: wishlist.ProductID,
-	}
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByID(wishlist.ProductID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
@@ -75,15 +71,10 @@ func (h *WishlistHandler) Delete(c echo.Context) error {
 }
 
 func (h *WishlistHandler) GetAllCurrentUser(c echo.Context) error {
-	wishlists, err := model.GetAllWishlistProductByUserEmail(
-		h.database.Conn,
-		helper.ExtractJwtEmail(c),
-	)
-
+	products, err := h.productRepository.GetAllWishlisProductByUserEmail(helper.ExtractJwtEmail(c))
 	if err != nil {
-		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, wishlists)
+	return c.JSON(http.StatusOK, products)
 }

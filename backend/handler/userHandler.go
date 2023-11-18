@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 	"strconv"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 	"tokopeida-backend/service"
 
 	"github.com/go-playground/validator/v10"
@@ -13,23 +13,23 @@ import (
 )
 
 type UserHandler struct {
-	database    *database.Database
-	validator   *validator.Validate
-	authService *service.AuthService
-	userService *service.UserService
+	validator      *validator.Validate
+	userRepository *repository.UserRepository
+	authService    *service.AuthService
+	userService    *service.UserService
 }
 
 func NewUserHandler(
-	database *database.Database,
 	validator *validator.Validate,
+	userRepository *repository.UserRepository,
 	authService *service.AuthService,
 	userService *service.UserService,
 ) *UserHandler {
 	return &UserHandler{
-		database:    database,
-		validator:   validator,
-		authService: authService,
-		userService: userService,
+		validator:      validator,
+		userRepository: userRepository,
+		authService:    authService,
+		userService:    userService,
 	}
 }
 
@@ -57,11 +57,8 @@ func (h *UserHandler) Register(c echo.Context) error {
 }
 
 func (h *UserHandler) GetByEmail(c echo.Context) error {
-	user := model.User{
-		Email: c.Param("email"),
-	}
-
-	if err := user.GetByEmail(h.database.Conn); err != nil {
+	user, err := h.userRepository.GetByEmail(c.Param("email"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "User not found")
 	}
 
@@ -69,7 +66,7 @@ func (h *UserHandler) GetByEmail(c echo.Context) error {
 }
 
 func (h *UserHandler) GetAll(c echo.Context) error {
-	users, err := model.GetAllUsers(h.database.Conn)
+	users, err := h.userRepository.GetAll()
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
@@ -98,7 +95,10 @@ func (h *UserHandler) UpdateCurrent(c echo.Context) error {
 
 	user := updateRequest.ToUser()
 	user.Email = helper.ExtractJwtEmail(c)
-	user.Update(h.database.Conn)
+	user, err := h.userRepository.Update(user)
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
 
 	return c.JSON(http.StatusOK, user)
 }
@@ -123,7 +123,8 @@ func (h *UserHandler) TopUp(c echo.Context) error {
 	}
 
 	user.Balance += topUpRequest.Amount
-	if err := user.UpdateBalance(h.database.Conn); err != nil {
+	user, err = h.userRepository.UpdateBalance(user)
+	if err != nil {
 		return echo.ErrInternalServerError
 	}
 

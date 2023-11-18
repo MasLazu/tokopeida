@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strconv"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -13,17 +14,20 @@ import (
 )
 
 type CartHandler struct {
-	database  *database.Database
-	validator *validator.Validate
+	validator         *validator.Validate
+	cartRepository    *repository.CartRepository
+	productRepository *repository.ProductRepository
 }
 
 func NewCartHandler(
-	database *database.Database,
 	validator *validator.Validate,
+	cartRepository *repository.CartRepository,
+	productRepository *repository.ProductRepository,
 ) *CartHandler {
 	return &CartHandler{
-		database:  database,
-		validator: validator,
+		validator:         validator,
+		cartRepository:    cartRepository,
+		productRepository: productRepository,
 	}
 }
 
@@ -45,21 +49,20 @@ func (h *CartHandler) Create(c echo.Context) error {
 	cart := createRequest.ToCart()
 	cart.UserEmail = helper.ExtractJwtEmail(c)
 
-	if err := cart.Create(h.database.Conn); err != nil {
+	cart, err = h.cartRepository.Create(cart)
+	if err != nil {
 		if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" {
 			return echo.NewHTTPError(http.StatusBadRequest, "Product already in cart")
 		}
 		return echo.ErrInternalServerError
 	}
 
-	product := model.Product{
-		ID: cart.ProductID,
-	}
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByID(cart.ProductID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
-	return c.JSON(http.StatusCreated, model.CartResponse{
+	return c.JSON(http.StatusCreated, model.Cart{
 		Product:  product,
 		Quantity: cart.Quantity,
 	})
@@ -87,18 +90,17 @@ func (h *CartHandler) Update(c echo.Context) error {
 	cart := updateRequest.ToCart()
 	cart.UserEmail = helper.ExtractJwtEmail(c)
 
-	if err := cart.Update(h.database.Conn); err != nil {
+	cart, err = h.cartRepository.Update(cart)
+	if err != nil {
 		return echo.ErrInternalServerError
 	}
 
-	product := model.Product{
-		ID: cart.ProductID,
-	}
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByID(cart.ProductID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
-	return c.JSON(http.StatusOK, model.CartResponse{
+	return c.JSON(http.StatusOK, model.Cart{
 		Product:  product,
 		Quantity: cart.Quantity,
 	})
@@ -110,14 +112,12 @@ func (h *CartHandler) Delete(c echo.Context) error {
 		ProductID: c.Param("product_id"),
 	}
 
-	if err := cart.Delete(h.database.Conn); err != nil {
+	if err := h.cartRepository.Delete(cart); err != nil {
 		return echo.ErrInternalServerError
 	}
 
-	product := model.Product{
-		ID: cart.ProductID,
-	}
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByID(cart.ProductID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 
@@ -125,14 +125,11 @@ func (h *CartHandler) Delete(c echo.Context) error {
 }
 
 func (h *CartHandler) GetAllCurrentUser(c echo.Context) error {
-	cartResponses, err := model.GetAllCartByEmail(
-		h.database.Conn,
-		helper.ExtractJwtEmail(c),
-	)
-
+	carts, err := h.cartRepository.GetAllByUserEmailJoinProduct(helper.ExtractJwtEmail(c))
 	if err != nil {
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, cartResponses)
+	return c.JSON(http.StatusOK, carts)
 }

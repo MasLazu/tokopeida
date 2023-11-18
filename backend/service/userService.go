@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"tokopeida-backend/database"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -12,12 +12,12 @@ import (
 var ErrEmailAlreadyTaken = errors.New("Email already taken")
 
 type UserService struct {
-	database *database.Database
+	userRepository *repository.UserRepository
 }
 
-func NewUserService(database *database.Database) *UserService {
+func NewUserService(userRepository *repository.UserRepository) *UserService {
 	return &UserService{
-		database: database,
+		userRepository: userRepository,
 	}
 }
 
@@ -31,7 +31,8 @@ func (s *UserService) Register(registerRequest model.UserRegister) (model.User, 
 
 	user.Password = string(hashedPassword)
 
-	if err := user.Create(s.database.Conn); err != nil {
+	user, err = s.userRepository.Create(user)
+	if err != nil {
 		if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" {
 			return user, ErrEmailAlreadyTaken
 		}

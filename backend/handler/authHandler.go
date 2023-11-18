@@ -2,9 +2,9 @@ package handler
 
 import (
 	"net/http"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 	"tokopeida-backend/service"
 
 	"github.com/go-playground/validator/v10"
@@ -12,23 +12,23 @@ import (
 )
 
 type AuthHandler struct {
-	database    *database.Database
-	validator   *validator.Validate
-	authService *service.AuthService
-	jwtKey      []byte
+	jwtKey                 []byte
+	validator              *validator.Validate
+	refreshTokenRepository *repository.RefreshTokenRepository
+	authService            *service.AuthService
 }
 
 func NewAuthHandler(
-	database *database.Database,
-	validator *validator.Validate,
-	authService *service.AuthService,
 	jwtKey []byte,
+	validator *validator.Validate,
+	refreshTokenRepository *repository.RefreshTokenRepository,
+	authService *service.AuthService,
 ) *AuthHandler {
 	return &AuthHandler{
-		database:    database,
-		validator:   validator,
-		authService: authService,
-		jwtKey:      jwtKey,
+		validator:              validator,
+		refreshTokenRepository: refreshTokenRepository,
+		authService:            authService,
+		jwtKey:                 jwtKey,
 	}
 }
 
@@ -62,11 +62,8 @@ func (h *AuthHandler) Refresh(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid refresh token")
 	}
 
-	refreshToken := model.RefreshToken{
-		Token: cookie.Value,
-	}
-
-	if err := refreshToken.GetByToken(h.database.Conn); err != nil {
+	refreshToken, err := h.refreshTokenRepository.GetByToken(cookie.Value)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid refresh token")
 	}
 
@@ -86,11 +83,8 @@ func (h *AuthHandler) Logout(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid refresh token")
 	}
 
-	refreshToken := model.RefreshToken{
-		Token: cookie.Value,
-	}
-
-	if err := refreshToken.Delete(h.database.Conn); err != nil {
+	refreshToken := model.RefreshToken{Token: cookie.Value}
+	if err := h.refreshTokenRepository.Delete(refreshToken); err != nil {
 		return echo.ErrInternalServerError
 	}
 

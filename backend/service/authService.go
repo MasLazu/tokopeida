@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -13,14 +13,20 @@ import (
 var ErrInvalidEmailOrPassword = errors.New("Invalid email or password")
 
 type AuthService struct {
-	database *database.Database
-	jwtKey   []byte
+	jwtKey                 []byte
+	userRepository         *repository.UserRepository
+	refreshTokenRepository *repository.RefreshTokenRepository
 }
 
-func NewAuthService(database *database.Database, jwtKey []byte) *AuthService {
+func NewAuthService(
+	jwtKey []byte,
+	userRepository *repository.UserRepository,
+	refreshTokenRepository *repository.RefreshTokenRepository,
+) *AuthService {
 	return &AuthService{
-		database: database,
-		jwtKey:   jwtKey,
+		userRepository:         userRepository,
+		refreshTokenRepository: refreshTokenRepository,
+		jwtKey:                 jwtKey,
 	}
 }
 
@@ -29,7 +35,9 @@ func (s *AuthService) CurrentUser(c echo.Context) (model.User, error) {
 		Email: helper.ExtractJwtEmail(c),
 	}
 
-	if err := user.GetByEmail(s.database.Conn); err != nil {
+	var err error
+	user, err = s.userRepository.GetByEmail(helper.ExtractJwtEmail(c))
+	if err != nil {
 		return user, err
 	}
 
@@ -37,11 +45,14 @@ func (s *AuthService) CurrentUser(c echo.Context) (model.User, error) {
 }
 
 func (s *AuthService) Login(loginRequest model.UserLogin, c echo.Context) (string, error) {
+	var err error
 	var accessToken string
 
 	password := loginRequest.Password
 	user := loginRequest.ToUser()
-	if err := user.GetByEmail(s.database.Conn); err != nil {
+
+	user, err = s.userRepository.GetByEmail(user.Email)
+	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			return accessToken, ErrInvalidEmailOrPassword
 		}
@@ -55,13 +66,15 @@ func (s *AuthService) Login(loginRequest model.UserLogin, c echo.Context) (strin
 	refreshToken := model.RefreshToken{
 		UserEmail: user.Email,
 	}
-	if err := refreshToken.Create(s.database.Conn); err != nil {
+
+	refreshToken, err = s.refreshTokenRepository.Create(refreshToken)
+	if err != nil {
 		return accessToken, err
 	}
 
 	helper.AssignRefreshTokenCookes(refreshToken.Token, c)
 
-	accessToken, err := helper.GenerateJwtToken(user.Email, s.jwtKey)
+	accessToken, err = helper.GenerateJwtToken(user.Email, s.jwtKey)
 	if err != nil {
 		return accessToken, err
 	}

@@ -3,9 +3,9 @@ package handler
 import (
 	"log"
 	"net/http"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -13,19 +13,22 @@ import (
 )
 
 type StoreHandler struct {
-	database  *database.Database
-	validator *validator.Validate
+	validator       *validator.Validate
+	storeRepository *repository.StoreRepository
 }
 
-func NewStoreHandler(database *database.Database, validator *validator.Validate) *StoreHandler {
+func NewStoreHandler(
+	validator *validator.Validate,
+	storeRepository *repository.StoreRepository,
+) *StoreHandler {
 	return &StoreHandler{
-		database:  database,
-		validator: validator,
+		validator:       validator,
+		storeRepository: storeRepository,
 	}
 }
 
 func (h *StoreHandler) GetAll(c echo.Context) error {
-	stores, err := model.GetAllStore(h.database.Conn)
+	stores, err := h.storeRepository.GetAll()
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
@@ -34,11 +37,8 @@ func (h *StoreHandler) GetAll(c echo.Context) error {
 }
 
 func (h *StoreHandler) GetByID(c echo.Context) error {
-	store := model.Store{
-		ID: c.Param("id"),
-	}
-
-	if err := store.GetByID(h.database.Conn); err != nil {
+	store, err := h.storeRepository.GetByID(c.Param("id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Store not found")
 	}
 
@@ -57,7 +57,8 @@ func (h *StoreHandler) CreateCurrentUserStore(c echo.Context) error {
 	store := registerRequest.ToStore()
 	store.OwnerEmail = helper.ExtractJwtEmail(c)
 
-	if err := store.Create(h.database.Conn); err != nil {
+	store, err := h.storeRepository.Create(store)
+	if err != nil {
 		if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" {
 			return echo.NewHTTPError(http.StatusBadRequest, "This account already has a store")
 		}
@@ -69,11 +70,8 @@ func (h *StoreHandler) CreateCurrentUserStore(c echo.Context) error {
 }
 
 func (h *StoreHandler) GetCurrent(c echo.Context) error {
-	store := model.Store{
-		OwnerEmail: helper.ExtractJwtEmail(c),
-	}
-
-	if err := store.GetByOwnerEmail(h.database.Conn); err != nil {
+	store, err := h.storeRepository.GetByOwnerEmail(helper.ExtractJwtEmail(c))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Store not found")
 	}
 
@@ -92,7 +90,8 @@ func (h *StoreHandler) UpdateCurrent(c echo.Context) error {
 	store := updateRequest.ToStore()
 	store.OwnerEmail = helper.ExtractJwtEmail(c)
 
-	if err := store.UpdateByOwnerEmail(h.database.Conn); err != nil {
+	store, err := h.storeRepository.UpdateByOwnerEmail(store)
+	if err != nil {
 		return echo.ErrInternalServerError
 	}
 

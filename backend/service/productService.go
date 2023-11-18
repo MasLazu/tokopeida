@@ -3,11 +3,11 @@ package service
 import (
 	"errors"
 	"io"
-	"log"
 	"os"
 	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -23,34 +23,50 @@ var (
 )
 
 type ProductService struct {
-	database    *database.Database
-	authService *AuthService
+	database               *database.Database
+	productRepository      *repository.ProductRepository
+	storeRepository        *repository.StoreRepository
+	transactionRepository  *repository.TransactionRepository
+	productImageRepository *repository.ProductImageRepository
+	userRepository         *repository.UserRepository
+	authService            *AuthService
 }
 
-func NewProductService(database *database.Database, auAuthService *AuthService) *ProductService {
+func NewProductService(
+	database *database.Database,
+	productRepository *repository.ProductRepository,
+	storeRepository *repository.StoreRepository,
+	transactionRepository *repository.TransactionRepository,
+	userRepository *repository.UserRepository,
+	productImageRepository *repository.ProductImageRepository,
+	auAuthService *AuthService,
+) *ProductService {
 	return &ProductService{
-		database:    database,
-		authService: auAuthService,
+		database:               database,
+		productRepository:      productRepository,
+		storeRepository:        storeRepository,
+		transactionRepository:  transactionRepository,
+		userRepository:         userRepository,
+		productImageRepository: productImageRepository,
+		authService:            auAuthService,
 	}
 }
 
 func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoContext echo.Context) (model.Transaction, error) {
 	var transaction model.Transaction
+
 	user, err := s.authService.CurrentUser(echoContext)
 	if err != nil {
 		return transaction, err
 	}
 
-	product := model.Product{
-		ID: transactionRequest.ProductID,
-	}
-
-	if err := product.GetByID(s.database.Conn); err != nil {
+	product, err := s.productRepository.GetByID(transactionRequest.ProductID)
+	if err != nil {
 		return transaction, ErrProductNotFound
 	}
 
-	store := model.Store{ID: product.StoreID}
-	if err := store.GetByID(s.database.Conn); err != nil {
+	store, err := s.storeRepository.GetByID(product.StoreID)
+	if err != nil {
 		return transaction, err
 	}
 
@@ -68,13 +84,14 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 		return transaction, ErrInsufficientBalance
 	}
 
-	tx, err := s.database.Conn.Begin()
+	tx, err := s.database.BeginTransaction()
 	if err != nil {
 		return transaction, err
 	}
 
 	user.Balance -= valueTransaction
-	if err := user.UpdateBalance(tx); err != nil {
+	user, err = s.userRepository.UpdateBalanceWithTransaction(user, tx)
+	if err != nil {
 		tx.Rollback()
 		return transaction, err
 	}
@@ -82,13 +99,15 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 	transaction = transactionRequest.ToTransaction()
 	transaction.UserEmail = user.Email
 
-	if err := transaction.Create(tx); err != nil {
+	transaction, err = s.transactionRepository.CreateWithTransaction(transaction, tx)
+	if err != nil {
 		tx.Rollback()
 		return transaction, err
 	}
 
 	product.Stock -= transaction.Quantity
-	if err := product.UpdateByID(tx); err != nil {
+	product, err = s.productRepository.UpdateWithTransaction(product, tx)
+	if err != nil {
 		tx.Rollback()
 		return transaction, err
 	}
@@ -96,6 +115,8 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 	if err := tx.Commit(); err != nil {
 		return transaction, err
 	}
+	transaction.Product = product
+	transaction.ProductID = ""
 
 	return transaction, nil
 }
@@ -103,10 +124,8 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 func (s *ProductService) Create(createRequest model.ProductCreate, echoContext echo.Context) (model.Product, error) {
 	product := createRequest.ToProduct()
 
-	store := model.Store{
-		OwnerEmail: helper.ExtractJwtEmail(echoContext),
-	}
-	if err := store.GetByOwnerEmail(s.database.Conn); err != nil {
+	store, err := s.storeRepository.GetByOwnerEmail(helper.ExtractJwtEmail(echoContext))
+	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			return product, ErrDontHaveStore
 		}
@@ -115,7 +134,8 @@ func (s *ProductService) Create(createRequest model.ProductCreate, echoContext e
 
 	product.StoreID = store.ID
 
-	if err := product.Create(s.database.Conn); err != nil {
+	product, err = s.productRepository.Create(product)
+	if err != nil {
 		return product, err
 	}
 
@@ -135,7 +155,6 @@ func (s *ProductService) Create(createRequest model.ProductCreate, echoContext e
 		defer dst.Close()
 
 		if _, err = io.Copy(dst, src); err != nil {
-			log.Println(err)
 			return product, err
 		}
 
@@ -144,7 +163,8 @@ func (s *ProductService) Create(createRequest model.ProductCreate, echoContext e
 			ProductID: product.ID,
 		}
 
-		if err := productImage.Create(s.database.Conn); err != nil {
+		productImage, err = s.productImageRepository.Create(productImage)
+		if err != nil {
 			return product, err
 		}
 
@@ -156,14 +176,15 @@ func (s *ProductService) Create(createRequest model.ProductCreate, echoContext e
 
 func (s *ProductService) Update(updateRequest model.ProductUpdate, echoContext echo.Context) (model.Product, error) {
 	product := updateRequest.ToProduct()
-	if err := product.GetByID(s.database.Conn); err != nil {
+	if _, err := s.productRepository.GetByID(product.ID); err != nil {
 		return product, ErrProductNotFound
 	}
 
 	store := model.Store{
 		OwnerEmail: helper.ExtractJwtEmail(echoContext),
 	}
-	if err := store.GetByOwnerEmail(s.database.Conn); err != nil {
+	store, err := s.storeRepository.GetByOwnerEmail(helper.ExtractJwtEmail(echoContext))
+	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			return product, ErrDontOwnProduct
 		}
@@ -174,7 +195,8 @@ func (s *ProductService) Update(updateRequest model.ProductUpdate, echoContext e
 		return product, ErrDontOwnProduct
 	}
 
-	if err := product.UpdateByID(s.database.Conn); err != nil {
+	product, err = s.productRepository.Update(product)
+	if err != nil {
 		return product, err
 	}
 

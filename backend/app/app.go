@@ -4,6 +4,7 @@ import (
 	"tokopeida-backend/database"
 	"tokopeida-backend/handler"
 	"tokopeida-backend/middleware"
+	"tokopeida-backend/repository"
 	"tokopeida-backend/service"
 
 	"github.com/go-playground/validator/v10"
@@ -28,18 +29,39 @@ func NewApp() *App {
 	config := NewConfig()
 	database := database.NewDatabase(config.DatabaseUrl)
 	validator := validator.New()
-	authService := service.NewAuthService(database, config.Jwt.SigningKey.([]byte))
-	userService := service.NewUserService(database)
-	productService := service.NewProductService(database, authService)
-	authHandler := handler.NewAuthHandler(database, validator, authService, config.Jwt.SigningKey.([]byte))
-	userHandler := handler.NewUserHandler(database, validator, authService, userService)
-	storeHandler := handler.NewStoreHandler(database, validator)
-	productHandler := handler.NewProductHandler(database, validator, productService)
-	transactionHandler := handler.NewTransactionHandler(database, validator)
-	wishlistHandler := handler.NewWishlistHandler(database)
-	cartHandler := handler.NewCartHandler(database, validator)
+
+	userRepository := repository.NewUserRepository(database.Conn)
+	storeRepository := repository.NewStoreRepository(database.Conn)
+	productRepository := repository.NewProductRepository(database.Conn)
+	transactionRepository := repository.NewTransactionRepository(database.Conn)
+	wishlistRepository := repository.NewWishlistRepository(database.Conn)
+	cartRepository := repository.NewCartRepository(database.Conn)
+	refreshTokenRepository := repository.NewRefreshTokenRepository(database.Conn)
+	productImageRepository := repository.NewProductImageRepository(database.Conn)
+
+	authService := service.NewAuthService(config.Jwt.SigningKey.([]byte), userRepository, refreshTokenRepository)
+	userService := service.NewUserService(userRepository)
+	productService := service.NewProductService(
+		database,
+		productRepository,
+		storeRepository,
+		transactionRepository,
+		userRepository,
+		productImageRepository,
+		authService,
+	)
+
+	authHandler := handler.NewAuthHandler(config.Jwt.SigningKey.([]byte), validator, refreshTokenRepository, authService)
+	userHandler := handler.NewUserHandler(validator, userRepository, authService, userService)
+	storeHandler := handler.NewStoreHandler(validator, storeRepository)
+	productHandler := handler.NewProductHandler(validator, productRepository, productService)
+	transactionHandler := handler.NewTransactionHandler(validator, transactionRepository)
+	wishlistHandler := handler.NewWishlistHandler(productRepository, wishlistRepository)
+	cartHandler := handler.NewCartHandler(validator, cartRepository, productRepository)
+
 	authMiddleware := middleware.NewAuthMiddleware(config.Jwt)
 	corsMiddleware := middleware.NewCorsMiddleware(config.Domain)
+
 	instance := echo.New()
 	SetupRoute(
 		instance,

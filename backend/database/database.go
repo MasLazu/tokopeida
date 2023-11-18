@@ -21,6 +21,10 @@ func NewDatabase(databaseUrl string) *Database {
 	}
 }
 
+func (db *Database) BeginTransaction() (*sql.Tx, error) {
+	return db.Conn.Begin()
+}
+
 func (db *Database) CloseConn() {
 	if err := db.Conn.Close(); err != nil {
 		panic(err)

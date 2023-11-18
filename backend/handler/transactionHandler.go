@@ -1,42 +1,43 @@
 package handler
 
 import (
+	"log"
 	"net/http"
-	"tokopeida-backend/database"
 	"tokopeida-backend/helper"
-	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
 type TransactionHandler struct {
-	database  *database.Database
-	validator *validator.Validate
+	validator             *validator.Validate
+	transactionRepository *repository.TransactionRepository
 }
 
 func NewTransactionHandler(
-	database *database.Database,
 	validator *validator.Validate,
+	transactionRepository *repository.TransactionRepository,
 ) *TransactionHandler {
 	return &TransactionHandler{
-		database:  database,
-		validator: validator,
+		validator:             validator,
+		transactionRepository: transactionRepository,
 	}
 }
 
 func (h *TransactionHandler) GetAll(c echo.Context) error {
-	stores, err := model.GetAllTransaction(h.database.Conn)
+	transacrtions, err := h.transactionRepository.GetAll()
 	if err != nil {
 		return echo.ErrInternalServerError
 	}
 
-	return c.JSON(http.StatusOK, stores)
+	return c.JSON(http.StatusOK, transacrtions)
 }
 
 func (h *TransactionHandler) GetAllCurrentUserTransaction(c echo.Context) error {
-	transactions, err := model.GetAllTransactionByUserEmail(h.database.Conn, helper.ExtractJwtEmail(c))
+	transactions, err := h.transactionRepository.GetAllByUserEmailJoinProduct(helper.ExtractJwtEmail(c))
 	if err != nil {
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 
@@ -44,11 +45,8 @@ func (h *TransactionHandler) GetAllCurrentUserTransaction(c echo.Context) error 
 }
 
 func (h *TransactionHandler) GetByID(c echo.Context) error {
-	transaction := model.Transaction{
-		ID: c.Param("id"),
-	}
-
-	if err := transaction.GetByID(h.database.Conn); err != nil {
+	transaction, err := h.transactionRepository.GetByID(c.Param("id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Transaction not found")
 	}
 

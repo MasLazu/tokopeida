@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"tokopeida-backend/database"
 	"tokopeida-backend/model"
+	"tokopeida-backend/repository"
 	"tokopeida-backend/service"
 
 	"github.com/go-playground/validator/v10"
@@ -13,27 +13,26 @@ import (
 )
 
 type ProductHandler struct {
-	database       *database.Database
-	validator      *validator.Validate
-	productService *service.ProductService
+	validator         *validator.Validate
+	productRepository *repository.ProductRepository
+	productService    *service.ProductService
 }
 
 func NewProductHandler(
-	database *database.Database,
 	validator *validator.Validate,
+	productRepository *repository.ProductRepository,
 	productService *service.ProductService,
 ) *ProductHandler {
 	return &ProductHandler{
-		database:       database,
-		validator:      validator,
-		productService: productService,
+		validator:         validator,
+		productRepository: productRepository,
+		productService:    productService,
 	}
 }
 
 func (h *ProductHandler) GetAll(c echo.Context) error {
-	products, err := model.GetAllProductJoinProductImage(h.database.Conn)
+	products, err := h.productRepository.GetAllJoinProductImage()
 	if err != nil {
-		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 
@@ -41,21 +40,9 @@ func (h *ProductHandler) GetAll(c echo.Context) error {
 }
 
 func (h *ProductHandler) GetByID(c echo.Context) error {
-	product := model.Product{
-		ID: c.Param("id"),
-	}
-
-	if err := product.GetByID(h.database.Conn); err != nil {
+	product, err := h.productRepository.GetByIDJoinProductImage(c.Param("id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
-	}
-
-	productImages, err := model.GetProductImagesByProductID(h.database.Conn, product.ID)
-	if err != nil && err.Error() != "sql: no rows in result set" {
-		return echo.ErrInternalServerError
-	}
-
-	for _, productImage := range productImages {
-		product.Images = append(product.Images, productImage.FileName)
 	}
 
 	return c.JSON(http.StatusOK, product)

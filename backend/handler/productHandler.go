@@ -42,6 +42,7 @@ func (h *ProductHandler) GetAll(c echo.Context) error {
 func (h *ProductHandler) GetByID(c echo.Context) error {
 	product, err := h.productRepository.GetByIDJoinProductImage(c.Param("id"))
 	if err != nil {
+		log.Println(err)
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
 

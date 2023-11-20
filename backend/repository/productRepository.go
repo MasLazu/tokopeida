@@ -30,26 +30,29 @@ func (r *ProductRepository) scanRow(row *sql.Row) (model.Product, error) {
 	)
 }
 
-func (r *ProductRepository) scanRowJoinProductImage(row *sql.Row) (model.Product, error) {
+func (r *ProductRepository) scanRowJoinProductImage(rows *sql.Rows) (model.Product, error) {
 	var product model.Product
-	var image sql.NullString
 
-	if err := row.Scan(
-		&product.ID,
-		&product.Name,
-		&product.StoreID,
-		&product.Description,
-		&product.Stock,
-		&product.Price,
-		&product.CreatedAt,
-		&product.UpdatedAt,
-		&image,
-	); err != nil {
-		return product, err
-	}
+	for rows.Next() {
+		var image sql.NullString
 
-	if image.Valid {
-		product.Images = append(product.Images, image.String)
+		if err := rows.Scan(
+			&product.ID,
+			&product.Name,
+			&product.StoreID,
+			&product.Description,
+			&product.Stock,
+			&product.Price,
+			&product.CreatedAt,
+			&product.UpdatedAt,
+			&image,
+		); err != nil {
+			return product, err
+		}
+
+		if image.Valid {
+			product.Images = append(product.Images, image.String)
+		}
 	}
 
 	return product, nil
@@ -180,15 +183,18 @@ func (r *ProductRepository) GetByID(id string) (model.Product, error) {
 }
 
 func (r *ProductRepository) GetByIDJoinProductImage(id string) (model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at 
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
 	FROM products 
 	LEFT JOIN product_images ON products.id = product_images.product_id
 	WHERE id = $1`
 
-	return r.scanRowJoinProductImage(r.dbPool.QueryRow(
-		sql,
-		id,
-	))
+	rows, err := r.dbPool.Query(sql, id)
+	if err != nil {
+		return model.Product{}, err
+	}
+	defer rows.Close()
+
+	return r.scanRowJoinProductImage(rows)
 }
 
 func (r *ProductRepository) GetAll() ([]model.Product, error) {

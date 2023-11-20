@@ -9,12 +9,58 @@ import ProductSlider from "@/components/product-slider"
 import ProductImageCarosel from "@/components/product-image-carosel"
 import { Progress } from "@/components/ui/progress"
 import PageTransition from "@/components/page-pransition"
+import { product, productApiResponse } from "@/interfaces/product"
+import { useServerFetch } from "@/hooks/useServerFetch"
 
-export default function ProductPage({
+export default async function ProductPage({
   params,
 }: {
-  params: { store: string; product: string }
+  params: { store: string; productId: string }
 }) {
+  let product: product | null = null
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse>(
+        `/api/product/${params.productId}`
+      )
+    )?.data
+    product = {
+      id: result.id,
+      name: result.name,
+      description: result.description,
+      price: result.price,
+      stock: result.stock,
+      images: result.images,
+      storeId: result.store_id,
+      createdAt: new Date(result.created_at),
+      updatedAt: new Date(result.updated_at),
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
+  let products: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+    )?.data
+    products = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
+  console.log("root : ", product?.images)
+
   return (
     <>
       <Navbar />
@@ -23,12 +69,12 @@ export default function ProductPage({
           <main className="container lg:grid lg:grid-cols-2 xl:gap-x-24 gap-x-12">
             <div>
               <Card>
-                <ProductImageCarosel />
+                <ProductImageCarosel filenames={product?.images} />
               </Card>
             </div>
             <div className="info lg:mt-0 md:mt-6 mt-4">
               <h1 className="md:text-3xl text-2xl font-semibold mb-2">
-                {params.product}
+                {product?.name}
               </h1>
               <div className="flex md:gap-6 gap-4 items-center">
                 <div className="flex md:gap-2 gap-1">
@@ -42,7 +88,7 @@ export default function ProductPage({
                 <p className="text-md text-slate-600">200+ sold</p>
               </div>
               <h2 className="md:text-5xl text-4xl font-semibold my-8">
-                Rp.490.000
+                Rp. {product?.price.toLocaleString().replace(/,/g, ".")}
               </h2>
               <div className="grid grid-cols-2 gap-4 md:hidden mb-8">
                 <Button>Buy Now</Button>
@@ -65,14 +111,8 @@ export default function ProductPage({
                 </Button>
                 <Button variant="outline">Follow</Button>
               </div>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Suscipit nesciunt tempore, fuga omnis sunt tempora recusandae
-                sit quas a eos reiciendis esse dignissimos nam voluptas minus
-                laboriosam iusto ipsam commodi in, voluptates accusamus,
-                voluptatibus natus. Earum adipisci cumque veniam libero aperiam
-                recusandae quo labore rerum, doloremque nobis sunt mollitia
-                nihil reiciendis sed ea consequatur.
+              <p className="max-h-[7.5rem] overflow-hidden">
+                {product?.description}
               </p>
               <div className="md:flex hidden gap-4 items-center my-8">
                 <Avatar className="w-14 h-14">
@@ -278,8 +318,16 @@ export default function ProductPage({
                 <Separator orientation="horizontal" className="my-3" />
               </div>
             </div>
-            <ProductSlider className="col-span-2" title="Related Product" />
-            <ProductSlider className="col-span-2" title="For You" />
+            <ProductSlider
+              className="col-span-2"
+              title="Related Product"
+              productsData={products}
+            />
+            <ProductSlider
+              className="col-span-2"
+              title="For You"
+              productsData={products}
+            />
           </main>
         </div>
       </PageTransition>

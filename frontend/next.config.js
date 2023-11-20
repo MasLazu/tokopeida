@@ -22,6 +22,12 @@ const nextConfig = {
           hostname: 'localhost',
           port: '',
           pathname: '/**',
+        },
+        {
+          protocol: 'https',
+          hostname: 'layanan.karangbaru.acehtamiangkab.go.id',
+          port: '',
+          pathname: '/**',
         }
       ],
   },

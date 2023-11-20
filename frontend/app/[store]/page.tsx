@@ -7,8 +7,34 @@ import { BsShare } from "react-icons/bs"
 import { FaStar } from "react-icons/fa6"
 import ProductSlider from "@/components/product-slider"
 import PageTransition from "@/components/page-pransition"
+import { useServerFetch } from "@/hooks/useServerFetch"
+import { productApiResponse, product } from "@/interfaces/product"
 
-export default function StorePage({ params }: { params: { store: string } }) {
+export default async function StorePage({
+  params,
+}: {
+  params: { store: string }
+}) {
+  let products: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+    )?.data
+    products = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
   return (
     <>
       <Navbar />
@@ -81,9 +107,15 @@ export default function StorePage({ params }: { params: { store: string } }) {
                 </Button>
               </div>
             </Card>
-            <ProductSlider title="Best Selling Products" />
-            <ProductSlider title="Newest Products" />
-            <ProductSlider title="Most Viewed Products" />
+            <ProductSlider
+              title="Best Selling Products"
+              productsData={products}
+            />
+            <ProductSlider title="Newest Products" productsData={products} />
+            <ProductSlider
+              title="Most Viewed Products"
+              productsData={products}
+            />
           </main>
         </div>
       </PageTransition>

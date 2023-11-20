@@ -5,7 +5,7 @@ import Image from "next/image"
 import { FaStar } from "react-icons/fa6"
 
 type ProductCardProps = {
-  title: string
+  name: string
   img: string
   price: number
   rating: number
@@ -13,7 +13,7 @@ type ProductCardProps = {
 }
 
 export default function ProductCard({
-  title,
+  name,
   img,
   price,
   rating,
@@ -31,7 +31,7 @@ export default function ProductCard({
       </AspectRatio>
       <div className="p-3 flex flex-col gap-2">
         <h3 className="sm:text-sm text-xs leading-none text-muted-foreground tracking-tight truncate">
-          {title}
+          {name}
         </h3>
         <p className="sm:text-md text-sm font-semibold truncate">Rp. {price}</p>
         <div className="grid grid-cols-11 gap-2">

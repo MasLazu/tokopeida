@@ -232,3 +232,34 @@ func (r *ProductRepository) GetAllWishlisProductByUserEmail(email string) ([]mod
 
 	return r.scanRows(rows)
 }
+
+func (r *ProductRepository) GetAllByStoreIDJoinImage(storeID string) ([]model.Product, error) {
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	FROM products 
+	LEFT JOIN product_images ON products.id = product_images.product_id
+	WHERE store_id = $1`
+
+	rows, err := r.dbPool.Query(sql, storeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return r.scanRowsJoinProductImage(rows)
+}
+
+func (r *ProductRepository) GetRandomJoinImage(amount int) ([]model.Product, error) {
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	FROM products 
+	LEFT JOIN product_images ON products.id = product_images.product_id
+	ORDER BY random()
+	LIMIT $1`
+
+	rows, err := r.dbPool.Query(sql, amount)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return r.scanRowsJoinProductImage(rows)
+}

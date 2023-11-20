@@ -16,6 +16,12 @@ const nextConfig = {
           hostname: 'www.static-src.com',
           port: '',
           pathname: '/**',
+        },
+        {
+          protocol: 'http',
+          hostname: 'localhost',
+          port: '',
+          pathname: '/**',
         }
       ],
   },

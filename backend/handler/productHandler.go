@@ -156,3 +156,26 @@ func (h *ProductHandler) Buy(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 }
+
+func (h *ProductHandler) GetAllStoreProduct(c echo.Context) error {
+	products, err := h.productRepository.GetAllByStoreIDJoinImage(c.Param("id"))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, products)
+}
+
+func (h *ProductHandler) GetExploreProduct(c echo.Context) error {
+	amount, err := strconv.ParseInt(c.Param("amount"), 10, 32)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
+	}
+
+	products, err := h.productRepository.GetRandomJoinImage(int(amount))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, products)
+}

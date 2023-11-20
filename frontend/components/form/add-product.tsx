@@ -10,12 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/components/ui/use-toast"
 import * as z from "zod"
-import { UserContext } from "@/app/user-provider"
-import { useContext } from "react"
 import { useClientFetch } from "@/hooks/useClientFetch"
-import { userApiResponse } from "@/interfaces/user"
-import { storeApiResponse } from "@/interfaces/store"
-import { StoreContext } from "@/app/store-provider"
 import { Textarea } from "@/components/ui/textarea"
 import { useState, useCallback, useEffect } from "react"
 import { useDropzone, FileRejection } from "react-dropzone"
@@ -50,17 +45,17 @@ interface FileWithPreview extends File {
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   stateSetter?: (state: boolean) => void
+  refetchProduct: () => Promise<void>
 }
 
 export default function AddProductFrom({
   className,
   stateSetter,
+  refetchProduct,
   ...props
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [files, setFiles] = useState<FileWithPreview[]>([])
-  const { setUser } = useContext(UserContext)
-  const { setStore } = useContext(StoreContext)
   const { toast } = useToast()
 
   const onDrop = useCallback(
@@ -142,6 +137,7 @@ export default function AddProductFrom({
       })
     }
 
+    await refetchProduct()
     setIsLoading(false)
   }
 
@@ -231,7 +227,7 @@ export default function AddProductFrom({
             <div
               {...getRootProps({
                 className:
-                  "col-span-2 h-32 border-2 rounded-lg text-muted-foreground bg-gray-100 border-dashed",
+                  "col-span-2 h-32 border-2 rounded-lg text-muted-foreground bg-gray-100 border-dashed overflow-hidden",
               })}
             >
               <input {...getInputProps()} />

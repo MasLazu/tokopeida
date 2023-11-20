@@ -40,6 +40,7 @@ func SetupRoute(
 	store := e.Group("/store")
 	store.GET("", storeHandler.GetAll)
 	store.GET("/:id", storeHandler.GetByID)
+	store.GET("/:id/product", productHandler.GetAllStoreProduct)
 	store.GET("/current", storeHandler.GetCurrent, authMiddleware.LoginOnly)
 	store.POST("/current", storeHandler.CreateCurrentUserStore, authMiddleware.LoginOnly)
 	store.PUT("/current", storeHandler.UpdateCurrent, authMiddleware.LoginOnly)
@@ -50,6 +51,7 @@ func SetupRoute(
 	product.GET("", productHandler.GetAll)
 	product.GET("/:id", productHandler.GetByID)
 	product.POST("/:id/buy", productHandler.Buy, authMiddleware.LoginOnly)
+	product.GET("/explore/:amount", productHandler.GetExploreProduct)
 
 	transaction := e.Group("/transaction")
 	transaction.GET("", transactionHandler.GetAll)

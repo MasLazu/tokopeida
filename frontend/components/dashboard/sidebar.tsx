@@ -13,8 +13,12 @@ import { TbPresentationAnalytics } from "react-icons/tb"
 import { MdOutlineLogout } from "react-icons/md"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useContext } from "react"
+import { StoreContext } from "@/app/store-provider"
 
 export default function Sidebar({ className }: { className?: string }) {
+  const { store } = useContext(StoreContext)
+
   const pathname = usePathname()
 
   const navItems = [
@@ -62,7 +66,7 @@ export default function Sidebar({ className }: { className?: string }) {
           </Avatar>
           <div>
             <h2 className="text-foreground sm:text-base text-sm truncate font-semibold">
-              Sunda empire
+              {store?.name}
             </h2>
             <div className="flex gap-0.5">
               <FaStar className="text-amber-400 w-4 h-4" />

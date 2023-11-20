@@ -7,6 +7,7 @@ import StoreProvider from "@/app/store-provider"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import { user, userApiResponse } from "@/interfaces/user"
 import { store, storeApiResponse } from "@/interfaces/store"
+import { useGetServerContext } from "@/hooks/useGetServerContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,47 +21,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  let user: user | null = null
-  let userResponse: userApiResponse | null = null
-
-  try {
-    userResponse = (
-      await useServerFetch.get<userApiResponse>("/api/user/current")
-    ).data
-  } catch (err) {
-    console.log(err)
-  }
-
-  if (userResponse) {
-    user = {
-      email: userResponse.email,
-      firstName: userResponse.first_name,
-      lastName: userResponse.last_name,
-      balance: userResponse.balance,
-      createdAt: new Date(userResponse.created_at),
-      updatedAt: new Date(userResponse.updated_at),
-    }
-  }
-
-  let store: store | null = null
-  let storeResponse: storeApiResponse | null = null
-
-  try {
-    storeResponse = (
-      await useServerFetch.get<storeApiResponse>("/api/store/current")
-    ).data
-  } catch (err) {
-    console.log(err)
-  }
-
-  if (storeResponse) {
-    store = {
-      id: storeResponse.id,
-      name: storeResponse.name,
-      createdAt: new Date(storeResponse.created_at),
-      updatedAt: new Date(storeResponse.updated_at),
-    }
-  }
+  const { user, store } = await useGetServerContext()
 
   return (
     <html lang="en">

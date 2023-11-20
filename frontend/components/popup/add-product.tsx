@@ -12,7 +12,11 @@ import {
 import AddProductFrom from "../form/add-product"
 import { useState } from "react"
 
-export default function AddProductPopup() {
+export default function AddProductPopup({
+  refetchProduct,
+}: {
+  refetchProduct: () => Promise<void>
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -27,7 +31,10 @@ export default function AddProductPopup() {
             Fill form below with your product data
           </DialogDescription>
         </DialogHeader>
-        <AddProductFrom stateSetter={setIsOpen} />
+        <AddProductFrom
+          stateSetter={setIsOpen}
+          refetchProduct={refetchProduct}
+        />
       </DialogContent>
     </Dialog>
   )

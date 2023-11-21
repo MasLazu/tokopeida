@@ -8,6 +8,7 @@ import PageTransition from "@/components/page-pransition"
 import ProductSlider from "@/components/product-slider"
 import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
+import { cartItem, cartItemApiResponse } from "@/interfaces/cart-item"
 
 export default async function StorePage() {
   let products: product[] = []
@@ -29,6 +30,31 @@ export default async function StorePage() {
   } catch (err) {
     console.log(err)
   }
+
+  let cartItems: cartItem[] = []
+  try {
+    const result = (
+      await useServerFetch.get<cartItemApiResponse[]>(`/api/cart/current`)
+    )?.data
+    cartItems = result.map((product) => ({
+      product: {
+        id: product.product.id,
+        name: product.product.name,
+        description: product.product.description,
+        price: product.product.price,
+        stock: product.product.stock,
+        images: product.product.images,
+        storeId: product.product.store_id,
+        createdAt: new Date(product.product.created_at),
+        updatedAt: new Date(product.product.updated_at),
+      },
+      quantity: product.quantity,
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
+  console.log(cartItems)
 
   return (
     <>

@@ -127,10 +127,12 @@ export default function Navbar() {
                       ) : (
                         <PopupCreateStore />
                       )}
-                      <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <AiOutlineHeart className="text-lg" />
-                        Wishlist
-                      </li>
+                      <Link href="/wishlist">
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                          <AiOutlineHeart className="text-lg" />
+                          Wishlist
+                        </li>
+                      </Link>
                       <PopupTopUp />
                       <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                         <LuHistory className="text-lg" />

@@ -17,15 +17,18 @@ import { useClientFetch } from "@/hooks/useClientFetch"
 import { product } from "@/interfaces/product"
 import { useToast } from "../ui/use-toast"
 import { AxiosError } from "axios"
+import { cn } from "@/lib/utils"
 
 type variant = "buy" | "add-to-cart"
 
 export default function BuyProductPopup({
   product,
   variant,
+  className,
 }: {
   product: product
   variant: variant
+  className?: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState(1)
@@ -91,7 +94,10 @@ export default function BuyProductPopup({
         {variant === "buy" ? (
           <Button
             size="lg"
-            className="flex gap-4 items-center px-2 py-2.5 rounded-md cursor-pointer"
+            className={cn(
+              className,
+              "flex gap-4 items-center px-2 py-2.5 rounded-md cursor-pointer"
+            )}
           >
             Buy Now
           </Button>
@@ -99,7 +105,10 @@ export default function BuyProductPopup({
           <Button
             size="lg"
             variant={"outline"}
-            className="flex gap-4 items-center px-2 py-2.5 rounded-md cursor-pointer"
+            className={cn(
+              className,
+              "flex gap-4 items-center px-2 py-2.5 rounded-md cursor-pointer"
+            )}
           >
             Add to Cart
           </Button>

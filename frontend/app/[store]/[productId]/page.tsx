@@ -12,6 +12,8 @@ import PageTransition from "@/components/page-pransition"
 import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import BuyProductPopup from "@/components/popup/product-action"
+import { FaHeart } from "react-icons/fa"
+import WishlistButton from "./wishlistButton"
 
 export default async function ProductPage({
   params,
@@ -100,9 +102,12 @@ export default async function ProductPage({
               <h2 className="md:text-5xl text-4xl font-semibold my-8">
                 Rp. {product?.price.toLocaleString().replace(/,/g, ".")}
               </h2>
-              <div className="grid grid-cols-2 gap-4 md:hidden mb-8">
-                <BuyProductPopup product={product} variant="buy" />
-                <BuyProductPopup product={product} variant="add-to-cart" />
+              <div className="flex gap-4 md:hidden">
+                <div className="grid grid-cols-2 gap-4 mb-8 flex-grow">
+                  <BuyProductPopup product={product} variant="buy" />
+                  <BuyProductPopup product={product} variant="add-to-cart" />
+                </div>
+                <WishlistButton productId={params.productId} />
               </div>
               <div className="flex gap-4 items-center my-6 md:hidden">
                 <Avatar className="w-14 h-14">
@@ -141,9 +146,12 @@ export default async function ProductPage({
                 </Button>
                 <Button variant="outline">Follow</Button>
               </div>
-              <div className="md:grid hidden grid-cols-2 gap-4 mt-8">
-                <BuyProductPopup product={product} variant="buy" />
-                <BuyProductPopup product={product} variant="add-to-cart" />
+              <div className="md:flex gap-4 hidden">
+                <div className="grid grid-cols-2 gap-4 mb-8 flex-grow">
+                  <BuyProductPopup product={product} variant="buy" />
+                  <BuyProductPopup product={product} variant="add-to-cart" />
+                </div>
+                <WishlistButton productId={params.productId} />
               </div>
             </div>
             <div className="user-reviews col-span-2 md:grid md:grid-cols-3 gap-x-16">

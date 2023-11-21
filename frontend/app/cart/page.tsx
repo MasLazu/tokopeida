@@ -6,8 +6,30 @@ import StoreItems from "@/components/cart/store-items"
 import { Button } from "@/components/ui/button"
 import PageTransition from "@/components/page-pransition"
 import ProductSlider from "@/components/product-slider"
+import { product, productApiResponse } from "@/interfaces/product"
+import { useServerFetch } from "@/hooks/useServerFetch"
 
-export default function StorePage() {
+export default async function StorePage() {
+  let products: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+    )?.data
+    products = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
   return (
     <>
       <Navbar />
@@ -59,8 +81,13 @@ export default function StorePage() {
             <ProductSlider
               title="Make your wishlist come true"
               className="col-span-7"
+              productsData={products}
             />
-            <ProductSlider title="For you" className="col-span-7" />
+            <ProductSlider
+              title="For you"
+              className="col-span-7"
+              productsData={products}
+            />
           </main>
         </div>
       </PageTransition>

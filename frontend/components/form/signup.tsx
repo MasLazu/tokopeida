@@ -88,6 +88,7 @@ export default function SignUpFrom({
       toast({
         title: "Sign up Success",
         description: `Hello ${user.first_name} ${user.last_name}, welcome to Tokopeida!`,
+        duration: 3000,
       })
       if (stateSetter) stateSetter(false)
     } catch (err) {
@@ -96,6 +97,7 @@ export default function SignUpFrom({
         variant: "destructive",
         title: "Sign up Failed",
         description: `${error.response?.data.message}`,
+        duration: 3000,
       })
     }
 

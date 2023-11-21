@@ -43,11 +43,13 @@ export default function Navbar() {
       toast({
         title: "Sign out success",
         description: `You have been signed out`,
+        duration: 3000,
       })
     } catch (error) {
       toast({
         title: "Sign out failed",
         description: `Something went wrong, please try again later`,
+        duration: 3000,
       })
       console.log(error)
     }
@@ -134,9 +136,11 @@ export default function Navbar() {
                         <LuHistory className="text-lg" />
                         Transaction history
                       </li>
-                      <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <BsCart4 className="text-lg" /> Cart
-                      </li>
+                      <Link href="/cart">
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                          <BsCart4 className="text-lg" /> Cart
+                        </li>
+                      </Link>
                     </ul>
                   </div>
                 </div>

@@ -67,6 +67,7 @@ export default function CreateStoreFrom({
       toast({
         title: "Create Store Success",
         description: `Your store has been created with name ${values.name}`,
+        duration: 3000,
       })
       if (stateSetter) stateSetter(false)
     } catch (error) {
@@ -75,6 +76,7 @@ export default function CreateStoreFrom({
         variant: "destructive",
         title: "Create Store Failed",
         description: `Something went wrong, please try again later`,
+        duration: 3000,
       })
     }
 

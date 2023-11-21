@@ -16,6 +16,7 @@ import { FiMinus, FiPlus } from "react-icons/fi"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import { product } from "@/interfaces/product"
 import { useToast } from "../ui/use-toast"
+import { AxiosError } from "axios"
 
 type variant = "buy" | "add-to-cart"
 
@@ -42,13 +43,17 @@ export default function BuyProductPopup({
       toast({
         title: "Success",
         description: "Your transaction has been created",
+        duration: 3000,
       })
       console.log(result)
     } catch (err) {
+      const error = err as AxiosError<{ message: string }>
       toast({
         title: "Error",
-        description: "Something went wrong",
+        description:
+          error.response?.data.message.toString() ?? "Something went wrong",
         variant: "destructive",
+        duration: 3000,
       })
       console.log(err)
     }
@@ -64,13 +69,17 @@ export default function BuyProductPopup({
       toast({
         title: "Success",
         description: "Your product has been added to cart",
+        duration: 3000,
       })
       console.log(result)
     } catch (err) {
+      const error = err as AxiosError<{ message: string }>
       toast({
         title: "Error",
-        description: "Something went wrong",
+        description:
+          error.response?.data.message.toString() ?? "Something went wrong",
         variant: "destructive",
+        duration: 3000,
       })
       console.log(err)
     }

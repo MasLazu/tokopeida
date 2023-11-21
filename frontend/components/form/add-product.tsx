@@ -125,6 +125,7 @@ export default function AddProductFrom({
       toast({
         title: "Add Product Success",
         description: `Product ${response.name} has been added`,
+        duration: 3000,
       })
 
       if (stateSetter) stateSetter(false)
@@ -134,6 +135,7 @@ export default function AddProductFrom({
         variant: "destructive",
         title: "Add Product Failed",
         description: `Please check your data`,
+        duration: 3000,
       })
     }
 

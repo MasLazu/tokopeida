@@ -15,7 +15,6 @@ export default function ProductImageCarosel({
   filenames: string[] | undefined
   className?: string
 }) {
-  console.log(filenames)
   return (
     <Swiper
       modules={[Pagination]}

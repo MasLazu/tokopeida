@@ -94,6 +94,7 @@ export default function SignInFrom({
       toast({
         title: "Sign in Success",
         description: `Hello ${user.first_name} ${user.last_name}, welcome to Tokopeida!`,
+        duration: 3000,
       })
       if (stateSetter) stateSetter(false)
     } catch (error) {
@@ -102,6 +103,7 @@ export default function SignInFrom({
         variant: "destructive",
         title: "Sign in Failed",
         description: `Please check your email and password`,
+        duration: 3000,
       })
     }
 

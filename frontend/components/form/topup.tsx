@@ -65,6 +65,7 @@ export default function TopUpFrom({
       toast({
         title: "Topup Success",
         description: `Your balance has been topped up by Rp. ${values.amount}`,
+        duration: 3000,
       })
       if (stateSetter) stateSetter(false)
     } catch (error) {
@@ -73,6 +74,7 @@ export default function TopUpFrom({
         variant: "destructive",
         title: "Topup Failed",
         description: `Something went wrong, please try again later`,
+        duration: 3000,
       })
     }
 

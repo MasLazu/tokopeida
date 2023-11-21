@@ -125,7 +125,7 @@ func (h *CartHandler) Delete(c echo.Context) error {
 }
 
 func (h *CartHandler) GetAllCurrentUser(c echo.Context) error {
-	carts, err := h.cartRepository.GetAllByUserEmailJoinProduct(helper.ExtractJwtEmail(c))
+	carts, err := h.cartRepository.GetAllByUserEmailJoinProductJoinProductImages(helper.ExtractJwtEmail(c))
 	if err != nil {
 		log.Println(err)
 		return echo.ErrInternalServerError

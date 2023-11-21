@@ -101,14 +101,7 @@ export default function BuyProductPopup({
           <DialogTitle className="text-2xl">{product.name}</DialogTitle>
         </DialogHeader>
         <Card className="max-w-[375px] sm:block hidden">
-          <ProductImageCarosel
-            filenames={[
-              "82296c99-9415-491d-b959-7a7ccb84796a.jpg",
-              "f04d47a0-0ba8-4141-b291-28d53b4ecada.jpg",
-              "ae69840a-fd4b-49d2-94d1-4e54e3b17605.jpg",
-              "36e8a7dc-a175-4c04-8db0-6f13eb6f6770.jpg",
-            ]}
-          />
+          <ProductImageCarosel filenames={product.images} />
         </Card>
         <div className="flex items-center justify-between">
           Quantity

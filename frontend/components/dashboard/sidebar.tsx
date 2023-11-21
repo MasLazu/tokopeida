@@ -83,9 +83,10 @@ export default function Sidebar({ className }: { className?: string }) {
       </div>
       <div className="flex flex-col justify-between grow">
         <div className="flex flex-col gap-3 text-gray-600">
-          {navItems.map((item) =>
+          {navItems.map((item, i) =>
             pathname === item.href ? (
               <Link
+                key={i}
                 href={item.href}
                 className="flex gap-4 items-center px-4 py-2.5 rounded-lg bg-foreground text-background cursor-pointer"
               >
@@ -94,6 +95,7 @@ export default function Sidebar({ className }: { className?: string }) {
               </Link>
             ) : (
               <Link
+                key={i}
                 href={item.href}
                 className="flex gap-4 items-center px-4 py-2.5 rounded-lg hover:bg-gray-100 cursor-pointer"
               >
@@ -103,12 +105,14 @@ export default function Sidebar({ className }: { className?: string }) {
             )
           )}
         </div>
-        <Button
-          className="flex gap-2 p-2 cursor-pointer w-full"
-          variant="destructive"
-        >
-          <MdOutlineLogout className="text-lg" /> Quit Dashboard
-        </Button>
+        <Link href="/">
+          <Button
+            className="flex gap-2 p-2 cursor-pointer w-full"
+            variant="destructive"
+          >
+            <MdOutlineLogout className="text-lg" /> Quit Dashboard
+          </Button>
+        </Link>
       </div>
     </div>
   )

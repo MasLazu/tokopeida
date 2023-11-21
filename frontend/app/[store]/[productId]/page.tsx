@@ -11,13 +11,25 @@ import { Progress } from "@/components/ui/progress"
 import PageTransition from "@/components/page-pransition"
 import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
+import BuyProductPopup from "@/components/popup/product-action"
 
 export default async function ProductPage({
   params,
 }: {
   params: { store: string; productId: string }
 }) {
-  let product: product | null = null
+  let product: product = {
+    id: "",
+    name: "",
+    description: "",
+    price: 0,
+    stock: 0,
+    images: [],
+    storeId: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
+
   try {
     const result = (
       await useServerFetch.get<productApiResponse>(
@@ -59,8 +71,6 @@ export default async function ProductPage({
     console.log(err)
   }
 
-  console.log("root : ", product?.images)
-
   return (
     <>
       <Navbar />
@@ -91,8 +101,8 @@ export default async function ProductPage({
                 Rp. {product?.price.toLocaleString().replace(/,/g, ".")}
               </h2>
               <div className="grid grid-cols-2 gap-4 md:hidden mb-8">
-                <Button>Buy Now</Button>
-                <Button variant="outline">Add to Cart</Button>
+                <BuyProductPopup product={product} variant="buy" />
+                <BuyProductPopup product={product} variant="add-to-cart" />
               </div>
               <div className="flex gap-4 items-center my-6 md:hidden">
                 <Avatar className="w-14 h-14">
@@ -132,10 +142,8 @@ export default async function ProductPage({
                 <Button variant="outline">Follow</Button>
               </div>
               <div className="md:grid hidden grid-cols-2 gap-4 mt-8">
-                <Button size="lg">Buy Now</Button>
-                <Button variant="outline" size="lg">
-                  Add to Cart
-                </Button>
+                <BuyProductPopup product={product} variant="buy" />
+                <BuyProductPopup product={product} variant="add-to-cart" />
               </div>
             </div>
             <div className="user-reviews col-span-2 md:grid md:grid-cols-3 gap-x-16">

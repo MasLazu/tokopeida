@@ -25,8 +25,6 @@ export default function StoreProvider({
 }) {
   const [store, setStore] = useState<store | null | undefined>(initialStore)
 
-  const storeSetter = (store: store | null) => setStore(store)
-
   async function getStore() {
     try {
       return (await useClientFetch.get<storeApiResponse>("/api/store/current"))
@@ -51,7 +49,7 @@ export default function StoreProvider({
   }, [])
 
   return (
-    <StoreContext.Provider value={{ store: store, setStore: storeSetter }}>
+    <StoreContext.Provider value={{ store, setStore }}>
       {children}
     </StoreContext.Provider>
   )

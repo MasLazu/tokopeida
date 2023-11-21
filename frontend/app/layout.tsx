@@ -4,9 +4,6 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import UserProvider from "@/app/user-provider"
 import StoreProvider from "@/app/store-provider"
-import { useServerFetch } from "@/hooks/useServerFetch"
-import { user, userApiResponse } from "@/interfaces/user"
-import { store, storeApiResponse } from "@/interfaces/store"
 import { useGetServerContext } from "@/hooks/useGetServerContext"
 
 const inter = Inter({ subsets: ["latin"] })

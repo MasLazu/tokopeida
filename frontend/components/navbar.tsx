@@ -106,7 +106,7 @@ export default function Navbar() {
                         </div>
                         <div className="flex gap-3 items-center font-semibold text-muted-foreground">
                           <FaMoneyBill1Wave className="text-emerald-600 text-lg" />
-                          Rp. {user.balance}
+                          Rp. {user.balance.toLocaleString().replace(/,/g, ".")}
                         </div>
                       </div>
                       <Button variant="outline" size="icon" className="px-2.5">

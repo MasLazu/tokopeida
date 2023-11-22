@@ -44,7 +44,7 @@ func (h *WishlistHandler) Create(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	product, err = h.productRepository.GetByID(wishlist.ProductID)
+	product, err = h.productRepository.GetByIDJoinProductImage(wishlist.ProductID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}
@@ -62,7 +62,7 @@ func (h *WishlistHandler) Delete(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	product, err := h.productRepository.GetByID(wishlist.ProductID)
+	product, err := h.productRepository.GetByIDJoinProductImage(wishlist.ProductID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
 	}

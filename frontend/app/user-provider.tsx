@@ -25,8 +25,6 @@ export default function UserProvider({
 }) {
   const [user, setUser] = useState<user | null | undefined>(initialUser)
 
-  const userSetter = (user: user | null) => setUser(user)
-
   async function getUser() {
     try {
       return (await useClientFetch.get<userApiResponse>("/api/user/current"))
@@ -53,7 +51,7 @@ export default function UserProvider({
   }, [])
 
   return (
-    <UserContext.Provider value={{ user: user, setUser: userSetter }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   )

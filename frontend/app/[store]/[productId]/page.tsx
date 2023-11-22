@@ -12,7 +12,6 @@ import PageTransition from "@/components/page-pransition"
 import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import BuyProductPopup from "@/components/popup/product-action"
-import { FaHeart } from "react-icons/fa"
 import WishlistButton from "./wishlistButton"
 
 export default async function ProductPage({

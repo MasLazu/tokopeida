@@ -61,4 +61,31 @@ export const useClientFetch = {
       }
     }
   },
+  delete: async <T>(path: string) => {
+    try {
+      const accessToken = await useClientAccessToken()
+
+      return await axios.delete<T>(process.env.NEXT_PUBLIC_DOMAIN + path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      })
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      if (err.response?.data?.message === "invalid or expired jwt") {
+        await useRenewAccessToken()
+        const accessToken = await useClientAccessToken()
+
+        return await axios.delete<T>(process.env.NEXT_PUBLIC_DOMAIN + path, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          withCredentials: true,
+        })
+      } else {
+        throw error
+      }
+    }
+  },
 }

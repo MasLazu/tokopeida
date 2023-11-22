@@ -225,9 +225,10 @@ func (r *ProductRepository) GetAllJoinProductImage() ([]model.Product, error) {
 }
 
 func (r *ProductRepository) GetAllWishlisProductByUserEmail(email string) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at 
+	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
 	FROM wishlists 
 	INNER JOIN products ON wishlists.product_id = products.id
+	INNER JOIN product_images ON products.id = product_images.product_id
 	WHERE user_email = $1`
 
 	rows, err := r.dbPool.Query(sql, email)
@@ -236,7 +237,7 @@ func (r *ProductRepository) GetAllWishlisProductByUserEmail(email string) ([]mod
 	}
 	defer rows.Close()
 
-	return r.scanRows(rows)
+	return r.scanRowsJoinProductImage(rows)
 }
 
 func (r *ProductRepository) GetAllByStoreIDJoinImage(storeID string) ([]model.Product, error) {

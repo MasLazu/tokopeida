@@ -13,6 +13,7 @@ import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import BuyProductPopup from "@/components/popup/product-action"
 import WishlistButton from "./wishlistButton"
+import { store, storeApiResponse } from "@/interfaces/store"
 
 export default async function ProductPage({
   params,
@@ -72,6 +73,23 @@ export default async function ProductPage({
     console.log(err)
   }
 
+  let store: store | null = null
+  try {
+    const result = (
+      await useServerFetch.get<storeApiResponse>(`/api/store/${params.store}`)
+    ).data
+    store = {
+      id: result.id,
+      name: result.name,
+      city: result.city,
+      createdAt: new Date(result.created_at),
+      updatedAt: new Date(result.updated_at),
+    }
+    console.log(store)
+  } catch (err) {
+    console.log(err)
+  }
+
   return (
     <>
       <Navbar />
@@ -110,15 +128,13 @@ export default async function ProductPage({
               </div>
               <div className="flex gap-4 items-center my-6 md:hidden">
                 <Avatar className="w-14 h-14">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback className="bg-blue-400 font-semibold text-background">
+                    CN
+                  </AvatarFallback>
                 </Avatar>
                 <div className="info flex-grow">
-                  <h3 className="text-xl font-semibold">{params.store}</h3>
-                  <p className="text-md text-muted-foreground">jakarta Utara</p>
+                  <h3 className="text-xl font-semibold">{store?.name}</h3>
+                  <p className="text-md text-muted-foreground">{store?.city}</p>
                 </div>
                 <Button variant="outline" size="icon">
                   <HiMiniChatBubbleLeftRight className="text-foreground h-4 w-4" />
@@ -130,15 +146,13 @@ export default async function ProductPage({
               </p>
               <div className="md:flex hidden gap-4 items-center my-8">
                 <Avatar className="w-14 h-14">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback className="bg-blue-400 font-semibold text-background text-xl">
+                    CN
+                  </AvatarFallback>
                 </Avatar>
                 <div className="info flex-grow">
-                  <h3 className="text-xl font-semibold">{params.store}</h3>
-                  <p className="text-md text-muted-foreground">jakarta Utara</p>
+                  <h3 className="text-xl font-semibold">{store?.name}</h3>
+                  <p className="text-md text-muted-foreground">{store?.city}</p>
                 </div>
                 <Button variant="outline" size="icon">
                   <HiMiniChatBubbleLeftRight className="text-foreground h-4 w-4" />

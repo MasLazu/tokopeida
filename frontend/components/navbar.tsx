@@ -77,11 +77,9 @@ export default function Navbar() {
                     {user.firstName}
                   </h2>
                   <Avatar className="hover:outline outline-2 outline-foreground">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback className="bg-blue-400 font-semibold text-background">
+                      CN
+                    </AvatarFallback>
                   </Avatar>
                 </div>
               </SheetTrigger>
@@ -94,11 +92,9 @@ export default function Navbar() {
                     <Separator orientation="horizontal" className="mb-3" />
                     <div className="flex items-center gap-4">
                       <Avatar className="h-14 w-14">
-                        <AvatarImage
-                          src="https://github.com/shadcn.png"
-                          alt="@shadcn"
-                        />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarFallback className="bg-blue-400 font-semibold text-background">
+                          CN
+                        </AvatarFallback>
                       </Avatar>
                       <div className="text-foreground flex-grow overflow-hidden">
                         <div className="name font-semibold text-xl truncate">

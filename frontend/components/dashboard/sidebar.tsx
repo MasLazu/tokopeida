@@ -61,8 +61,9 @@ export default function Sidebar({ className }: { className?: string }) {
       <div className="flex items-center justify-between gap-3 mb-10">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback className="bg-blue-400 font-semibold text-background">
+              CN
+            </AvatarFallback>
           </Avatar>
           <div>
             <h2 className="text-foreground sm:text-base text-sm truncate font-semibold">

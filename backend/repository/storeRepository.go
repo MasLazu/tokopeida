@@ -21,6 +21,7 @@ func (r *StoreRepository) scanRow(row *sql.Row) (model.Store, error) {
 		&store.ID,
 		&store.OwnerEmail,
 		&store.Name,
+		&store.City,
 		&store.CreatedAt,
 		&store.UpdatedAt,
 	)
@@ -36,6 +37,7 @@ func (r *StoreRepository) scanRows(rows *sql.Rows) ([]model.Store, error) {
 			&store.ID,
 			&store.OwnerEmail,
 			&store.Name,
+			&store.City,
 			&store.CreatedAt,
 			&store.UpdatedAt,
 		); err != nil {
@@ -49,7 +51,7 @@ func (r *StoreRepository) scanRows(rows *sql.Rows) ([]model.Store, error) {
 }
 
 func (r *StoreRepository) Create(store model.Store) (model.Store, error) {
-	sql := `INSERT INTO stores (owner_email, name) VALUES ($1, $2) RETURNING id, owner_email, name, created_at, updated_at`
+	sql := `INSERT INTO stores (owner_email, name, city) VALUES ($1, $2, $3) RETURNING id, owner_email, name, city, created_at, updated_at`
 
 	return r.scanRow(r.dbPool.QueryRow(
 		sql,
@@ -60,7 +62,7 @@ func (r *StoreRepository) Create(store model.Store) (model.Store, error) {
 
 func (r *StoreRepository) GetAll() ([]model.Store, error) {
 	var stores []model.Store
-	sql := `SELECT id, owner_email, name, created_at, updated_at FROM stores`
+	sql := `SELECT id, owner_email, name, city, created_at, updated_at FROM stores`
 
 	rows, err := r.dbPool.Query(sql)
 	if err != nil {
@@ -72,7 +74,7 @@ func (r *StoreRepository) GetAll() ([]model.Store, error) {
 }
 
 func (r *StoreRepository) GetByID(id string) (model.Store, error) {
-	sql := `SELECT id, owner_email, name, created_at, updated_at 
+	sql := `SELECT id, owner_email, name, city, created_at, updated_at 
 	FROM stores 
 	WHERE id = $1`
 
@@ -83,7 +85,7 @@ func (r *StoreRepository) GetByID(id string) (model.Store, error) {
 }
 
 func (r *StoreRepository) GetByOwnerEmail(ownerEmail string) (model.Store, error) {
-	sql := `SELECT id, owner_email, name, created_at, updated_at 
+	sql := `SELECT id, owner_email, name, city, created_at, updated_at 
 	FROM stores 
 	WHERE owner_email = $1`
 
@@ -96,7 +98,7 @@ func (r *StoreRepository) GetByOwnerEmail(ownerEmail string) (model.Store, error
 func (r *StoreRepository) UpdateByOwnerEmail(store model.Store) (model.Store, error) {
 	sql := `UPDATE stores SET name = $1 
 	WHERE owner_email = $2 
-	RETURNING id, owner_email, name, created_at, updated_at`
+	RETURNING id, owner_email, name, city, created_at, updated_at`
 
 	return r.scanRow(r.dbPool.QueryRow(
 		sql,

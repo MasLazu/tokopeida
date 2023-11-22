@@ -74,7 +74,7 @@ export default function ProductSlider({
           {productData.map((product) => {
             return (
               <SwiperSlide key={product.id} className="cursor-pointers">
-                <Link href={`/yanto-store/${product.id}`}>
+                <Link href={`/${product.storeId}/${product.id}`}>
                   <ProductCard
                     name={product.name}
                     price={product.price}

@@ -48,6 +48,7 @@ func (h *StoreHandler) GetByID(c echo.Context) error {
 func (h *StoreHandler) CreateCurrentUserStore(c echo.Context) error {
 	registerRequest := model.StoreRegister{
 		Name: c.FormValue("name"),
+		City: c.FormValue("city"),
 	}
 
 	if err := h.validator.Struct(registerRequest); err != nil {

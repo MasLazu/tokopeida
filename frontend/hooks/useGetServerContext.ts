@@ -66,6 +66,7 @@ export async function useGetServerContext() {
     store = {
       id: storeResponse.id,
       name: storeResponse.name,
+      city: storeResponse.city,
       createdAt: new Date(storeResponse.created_at),
       updatedAt: new Date(storeResponse.updated_at),
     }

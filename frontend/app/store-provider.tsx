@@ -41,6 +41,7 @@ export default function StoreProvider({
         setStore({
           id: res.id,
           name: res.name,
+          city: res.city,
           createdAt: new Date(res.created_at),
           updatedAt: new Date(res.updated_at),
         })

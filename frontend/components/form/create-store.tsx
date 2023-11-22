@@ -24,6 +24,7 @@ import {
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
+  city: z.string().min(1, { message: "City is required" }),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -48,6 +49,7 @@ export default function CreateStoreFrom({
 
     const formData = new FormData()
     formData.append("name", values.name)
+    formData.append("city", values.city)
 
     try {
       const store = (
@@ -60,6 +62,7 @@ export default function CreateStoreFrom({
       setStore({
         id: store.id,
         name: store.name,
+        city: store.city,
         createdAt: new Date(store.created_at),
         updatedAt: new Date(store.updated_at),
       })
@@ -103,6 +106,24 @@ export default function CreateStoreFrom({
                     disabled={isLoading}
                   />
                   <FormMessage id="name-message" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="city"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="city" className="text-foreground">
+                    City
+                  </FormLabel>
+                  <Input
+                    {...field}
+                    id="city"
+                    type="text"
+                    disabled={isLoading}
+                  />
+                  <FormMessage id="city-message" />
                 </FormItem>
               )}
             />

@@ -29,7 +29,7 @@ export default function WishlistsProvider({
     try {
       return (
         await useClientFetch.get<productApiResponse[] | null>(
-          "/api/user/current"
+          "/api/wishlist/current"
         )
       ).data
     } catch (err) {

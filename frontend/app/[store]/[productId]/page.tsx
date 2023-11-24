@@ -26,6 +26,7 @@ export default async function ProductPage({
     description: "",
     price: 0,
     stock: 0,
+    sold: 0,
     images: [],
     storeId: "",
     createdAt: new Date(),
@@ -44,6 +45,7 @@ export default async function ProductPage({
       description: result.description,
       price: result.price,
       stock: result.stock,
+      sold: result.sold,
       images: result.images,
       storeId: result.store_id,
       createdAt: new Date(result.created_at),
@@ -64,6 +66,7 @@ export default async function ProductPage({
       description: product.description,
       price: product.price,
       stock: product.stock,
+      sold: product.sold,
       images: product.images,
       storeId: product.store_id,
       createdAt: new Date(product.created_at),
@@ -114,7 +117,7 @@ export default async function ProductPage({
                   <FaStar className="text-slate-200 w-5 h-5" />
                 </div>
                 <Separator orientation="vertical" className="h-6" />
-                <p className="text-md text-slate-600">200+ sold</p>
+                <p className="text-md text-slate-600">{product.sold} sold</p>
               </div>
               <h2 className="md:text-5xl text-4xl font-semibold my-8">
                 Rp. {product?.price.toLocaleString().replace(/,/g, ".")}

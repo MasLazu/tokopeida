@@ -4,6 +4,7 @@ export interface product {
   storeId: string
   description: string
   stock: number
+  sold: number
   price: number
   images?: string[]
   createdAt: Date
@@ -16,6 +17,7 @@ export interface productApiResponse {
   store_id: string
   description: string
   stock: number
+  sold: number
   price: number
   images?: string[]
   created_at: string

@@ -53,6 +53,7 @@ export default function WishlistButton({ productId }: { productId: string }) {
             description: result.description,
             price: result.price,
             stock: result.stock,
+            sold: result.sold,
             images: result.images,
             storeId: result.store_id,
             createdAt: new Date(result.created_at),

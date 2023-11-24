@@ -76,7 +76,7 @@ func (r *CartRepository) scanRowsJoinProductJoinProductImages(rows *sql.Rows) ([
 		exist := false
 		if image.Valid {
 			for i, p := range cartResponses {
-				if p.ProductID == cartResponse.ProductID {
+				if p.Product.ID == cartResponse.Product.ID {
 					cartResponses[i].Product.Images = append(cartResponses[i].Product.Images, image.String)
 					exist = true
 					break
@@ -110,11 +110,15 @@ func (r *CartRepository) Create(cart model.Cart) (model.Cart, error) {
 
 func (r *CartRepository) Update(cart model.Cart) (model.Cart, error) {
 	sql := `UPDATE carts 
-	SET quantity = $1 returning user_email, product_id, quantity`
+	SET quantity = $1 
+	WHERE product_id = $2 AND user_email = $3
+	RETURNING user_email, product_id, quantity`
 
 	return r.scanRow(r.dbPool.QueryRow(
 		sql,
 		cart.Quantity,
+		cart.ProductID,
+		cart.UserEmail,
 	))
 }
 

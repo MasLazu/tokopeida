@@ -64,6 +64,7 @@ func SetupRoute(
 
 	cart := e.Group("/cart")
 	cart.POST("", cartHandler.Create, authMiddleware.LoginOnly)
+	cart.PUT("/:product_id", cartHandler.Update, authMiddleware.LoginOnly)
 	cart.GET("/current", cartHandler.GetAllCurrentUser, authMiddleware.LoginOnly)
 	cart.DELETE("/:product_id", cartHandler.Delete, authMiddleware.LoginOnly)
 }

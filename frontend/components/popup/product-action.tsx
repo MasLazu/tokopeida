@@ -18,6 +18,8 @@ import { product } from "@/interfaces/product"
 import { useToast } from "../ui/use-toast"
 import { AxiosError } from "axios"
 import { cn } from "@/lib/utils"
+import { useContext } from "react"
+import { CartContext } from "@/app/cart-provider"
 
 type variant = "buy" | "add-to-cart"
 
@@ -32,6 +34,7 @@ export default function BuyProductPopup({
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState(1)
+  const { refetchCart } = useContext(CartContext)
   const { toast } = useToast()
 
   async function buyProduct() {
@@ -39,16 +42,12 @@ export default function BuyProductPopup({
     formData.append("quantity", amount.toString())
 
     try {
-      const result = await useClientFetch.post(
-        `/api/product/${product.id}/buy`,
-        formData
-      )
+      await useClientFetch.post(`/api/product/${product.id}/buy`, formData)
       toast({
-        title: "Success",
-        description: "Your transaction has been created",
+        title: "Transaction has been created",
+        description: `Success buying ${product.name}`,
         duration: 3000,
       })
-      console.log(result)
     } catch (err) {
       const error = err as AxiosError<{ message: string }>
       toast({
@@ -58,8 +57,8 @@ export default function BuyProductPopup({
         variant: "destructive",
         duration: 3000,
       })
-      console.log(err)
     }
+    setIsOpen(false)
   }
 
   async function addToCart() {
@@ -69,12 +68,13 @@ export default function BuyProductPopup({
 
     try {
       const result = await useClientFetch.post("/api/cart", formData)
+      console.log(result)
       toast({
-        title: "Success",
-        description: "Your product has been added to cart",
+        title: "Success added to cart",
+        description: `${product.name} has been added to cart`,
         duration: 3000,
       })
-      console.log(result)
+      refetchCart()
     } catch (err) {
       const error = err as AxiosError<{ message: string }>
       toast({
@@ -84,8 +84,8 @@ export default function BuyProductPopup({
         variant: "destructive",
         duration: 3000,
       })
-      console.log(err)
     }
+    setIsOpen(false)
   }
 
   return (

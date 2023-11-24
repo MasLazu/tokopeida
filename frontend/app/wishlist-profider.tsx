@@ -48,6 +48,7 @@ export default function WishlistsProvider({
             description: wishlist.description,
             price: wishlist.price,
             stock: wishlist.stock,
+            sold: wishlist.sold,
             images: wishlist.images,
             storeId: wishlist.store_id,
             createdAt: new Date(wishlist.created_at),

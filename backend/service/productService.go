@@ -89,6 +89,18 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 		return transaction, err
 	}
 
+	storeOwner, err := s.userRepository.GetByEmail(store.OwnerEmail)
+	if err != nil {
+		tx.Rollback()
+		return transaction, err
+	}
+
+	storeOwner.Balance += valueTransaction
+	if _, err := s.userRepository.UpdateBalanceWithTransaction(storeOwner, tx); err != nil {
+		tx.Rollback()
+		return transaction, err
+	}
+
 	user.Balance -= valueTransaction
 	user, err = s.userRepository.UpdateBalanceWithTransaction(user, tx)
 	if err != nil {
@@ -106,6 +118,7 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 	}
 
 	product.Stock -= transaction.Quantity
+	product.Sold += transaction.Quantity
 	product, err = s.productRepository.UpdateWithTransaction(product, tx)
 	if err != nil {
 		tx.Rollback()

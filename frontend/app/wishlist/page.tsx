@@ -16,6 +16,7 @@ export default async function Wishlist() {
       description: product.description,
       price: product.price,
       stock: product.stock,
+      sold: product.sold,
       images: product.images,
       storeId: product.store_id,
       createdAt: new Date(product.created_at),

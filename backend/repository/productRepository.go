@@ -24,6 +24,7 @@ func (r *ProductRepository) scanRow(row *sql.Row) (model.Product, error) {
 		&product.StoreID,
 		&product.Description,
 		&product.Stock,
+		&product.Sold,
 		&product.Price,
 		&product.CreatedAt,
 		&product.UpdatedAt,
@@ -42,6 +43,7 @@ func (r *ProductRepository) scanRowJoinProductImage(rows *sql.Rows) (model.Produ
 			&product.StoreID,
 			&product.Description,
 			&product.Stock,
+			&product.Sold,
 			&product.Price,
 			&product.CreatedAt,
 			&product.UpdatedAt,
@@ -70,6 +72,7 @@ func (r *ProductRepository) scanRows(rows *sql.Rows) ([]model.Product, error) {
 			&product.StoreID,
 			&product.Description,
 			&product.Stock,
+			&product.Sold,
 			&product.Price,
 			&product.CreatedAt,
 			&product.UpdatedAt,
@@ -96,6 +99,7 @@ func (r *ProductRepository) scanRowsJoinProductImage(rows *sql.Rows) ([]model.Pr
 			&product.StoreID,
 			&product.Description,
 			&product.Stock,
+			&product.Sold,
 			&product.Price,
 			&product.CreatedAt,
 			&product.UpdatedAt,
@@ -129,7 +133,7 @@ func (r *ProductRepository) scanRowsJoinProductImage(rows *sql.Rows) ([]model.Pr
 func (r *ProductRepository) Create(product model.Product) (model.Product, error) {
 	sql := `INSERT INTO products (name, store_id, description, stock, price)
 	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id, name, store_id, description, stock, price, created_at, updated_at`
+	RETURNING id, name, store_id, description, stock, sold, price, created_at, updated_at`
 
 	return r.scanRow(r.dbPool.QueryRow(
 		sql,
@@ -137,42 +141,45 @@ func (r *ProductRepository) Create(product model.Product) (model.Product, error)
 		product.StoreID,
 		product.Description,
 		product.Stock,
+		product.Sold,
 		product.Price,
 	))
 }
 
 func (r *ProductRepository) Update(product model.Product) (model.Product, error) {
-	sql := `UPDATE products SET name = $1, description = $2, stock = $3, price = $4
-	WHERE id = $5
-	RETURNING id, name, store_id, description, stock, price, created_at, updated_at`
+	sql := `UPDATE products SET name = $1, description = $2, stock = $3, sold = $4, price = $5
+	WHERE id = $6
+	RETURNING id, name, store_id, description, stock, sold, price, created_at, updated_at`
 
 	return r.scanRow(r.dbPool.QueryRow(
 		sql,
 		product.Name,
 		product.Description,
 		product.Stock,
+		product.Sold,
 		product.Price,
 		product.ID,
 	))
 }
 
 func (r *ProductRepository) UpdateWithTransaction(product model.Product, tx *sql.Tx) (model.Product, error) {
-	sql := `UPDATE products SET name = $1, description = $2, stock = $3, price = $4
-	WHERE id = $5
-	RETURNING id, name, store_id, description, stock, price, created_at, updated_at`
+	sql := `UPDATE products SET name = $1, description = $2, stock = $3, sold = $4, price = $5
+	WHERE id = $6
+	RETURNING id, name, store_id, description, stock, sold, price, created_at, updated_at`
 
 	return r.scanRow(tx.QueryRow(
 		sql,
 		product.Name,
 		product.Description,
 		product.Stock,
+		product.Sold,
 		product.Price,
 		product.ID,
 	))
 }
 
 func (r *ProductRepository) GetByID(id string) (model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at 
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at 
 	FROM products 
 	WHERE id = $1`
 
@@ -183,7 +190,7 @@ func (r *ProductRepository) GetByID(id string) (model.Product, error) {
 }
 
 func (r *ProductRepository) GetByIDJoinProductImage(id string) (model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
 	FROM products 
 	LEFT JOIN product_images ON products.id = product_images.product_id
 	WHERE id = $1`
@@ -198,7 +205,7 @@ func (r *ProductRepository) GetByIDJoinProductImage(id string) (model.Product, e
 }
 
 func (r *ProductRepository) GetAll() ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at 
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at 
 	FROM products`
 
 	rows, err := r.dbPool.Query(sql)
@@ -211,7 +218,7 @@ func (r *ProductRepository) GetAll() ([]model.Product, error) {
 }
 
 func (r *ProductRepository) GetAllJoinProductImage() ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
 	FROM products
 	LEFT JOIN product_images ON products.id = product_images.product_id`
 
@@ -225,7 +232,7 @@ func (r *ProductRepository) GetAllJoinProductImage() ([]model.Product, error) {
 }
 
 func (r *ProductRepository) GetAllWishlisProductByUserEmail(email string) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
 	FROM wishlists 
 	INNER JOIN products ON wishlists.product_id = products.id
 	INNER JOIN product_images ON products.id = product_images.product_id
@@ -241,7 +248,7 @@ func (r *ProductRepository) GetAllWishlisProductByUserEmail(email string) ([]mod
 }
 
 func (r *ProductRepository) GetAllByStoreIDJoinImage(storeID string) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
 	FROM products 
 	LEFT JOIN product_images ON products.id = product_images.product_id
 	WHERE store_id = $1`
@@ -256,7 +263,7 @@ func (r *ProductRepository) GetAllByStoreIDJoinImage(storeID string) ([]model.Pr
 }
 
 func (r *ProductRepository) GetRandomJoinImage(amount int) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, price, created_at, updated_at, file_name
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
 	FROM products 
 	LEFT JOIN product_images ON products.id = product_images.product_id
 	ORDER BY random()

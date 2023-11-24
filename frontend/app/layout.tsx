@@ -6,6 +6,7 @@ import UserProvider from "@/app/user-provider"
 import StoreProvider from "@/app/store-provider"
 import { useGetServerContext } from "@/hooks/useGetServerContext"
 import WishlistsProvider from "./wishlist-profider"
+import CartProvider from "./cart-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,20 +20,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, store, wishlists } = await useGetServerContext()
+  const { user, store, wishlists, cartItems } = await useGetServerContext()
 
   return (
     <html lang="en">
-      <WishlistsProvider initialWishlists={wishlists}>
-        <StoreProvider initialStore={store}>
-          <UserProvider initialUser={user}>
-            <body className={inter.className}>
-              {children}
-              <Toaster />
-            </body>
-          </UserProvider>
-        </StoreProvider>
-      </WishlistsProvider>
+      <CartProvider initialCart={cartItems}>
+        <WishlistsProvider initialWishlists={wishlists}>
+          <StoreProvider initialStore={store}>
+            <UserProvider initialUser={user}>
+              <body className={inter.className}>
+                {children}
+                <Toaster />
+              </body>
+            </UserProvider>
+          </StoreProvider>
+        </WishlistsProvider>
+      </CartProvider>
     </html>
   )
 }

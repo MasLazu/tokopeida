@@ -87,6 +87,7 @@ export default function SignInFrom({
       setStore({
         id: storeResponse.id,
         name: storeResponse.name,
+        city: storeResponse.city,
         createdAt: new Date(storeResponse.created_at),
         updatedAt: new Date(storeResponse.updated_at),
       })

@@ -11,6 +11,7 @@ type Product struct {
 	StoreID     string     `json:"store_id,omitempty"`
 	Description string     `json:"description,omitempty"`
 	Stock       int        `json:"stock,omitempty"`
+	Sold        int        `json:"sold"`
 	Price       int64      `json:"price,omitempty"`
 	Images      []string   `json:"images,omitempty"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`

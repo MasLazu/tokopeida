@@ -5,15 +5,18 @@ import { useState } from "react"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import { useEffect } from "react"
 import { userApiResponse, user } from "@/interfaces/user"
+import { useToast } from "@/components/ui/use-toast"
 
 type userContext = {
   user: user | null | undefined
   setUser: (user: user | null) => void
+  refetchUser: () => void
 }
 
 export const UserContext = createContext<userContext>({
   user: null,
   setUser: (user: user | null) => {},
+  refetchUser: () => {},
 })
 
 export default function UserProvider({
@@ -24,34 +27,41 @@ export default function UserProvider({
   initialUser: user | null
 }) {
   const [user, setUser] = useState<user | null | undefined>(initialUser)
+  const { toast } = useToast()
 
-  async function getUser() {
+  const refetchUser = async () => {
+    console.log("prot")
     try {
-      return (await useClientFetch.get<userApiResponse>("/api/user/current"))
-        .data
+      const result = (
+        await useClientFetch.get<userApiResponse>("/api/user/current")
+      ).data
+      if (result) {
+        setUser({
+          email: result.email,
+          firstName: result.first_name,
+          lastName: result.last_name,
+          balance: result.balance,
+          createdAt: new Date(result.created_at),
+          updatedAt: new Date(result.updated_at),
+        })
+      }
     } catch (err) {
       console.log(err)
-      return null
+      toast({
+        title: "Error",
+        description: "Something went wrong when fetching user data",
+        duration: 3000,
+        variant: "destructive",
+      })
     }
   }
 
   useEffect(() => {
-    getUser().then((res) => {
-      if (res) {
-        setUser({
-          email: res.email,
-          firstName: res.first_name,
-          lastName: res.last_name,
-          balance: res.balance,
-          createdAt: new Date(res.created_at),
-          updatedAt: new Date(res.updated_at),
-        })
-      }
-    })
+    refetchUser()
   }, [])
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, refetchUser }}>
       {children}
     </UserContext.Provider>
   )

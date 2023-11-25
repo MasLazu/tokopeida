@@ -11,20 +11,24 @@ export default async function Home() {
   let formSearch: product[] = []
   try {
     const result = (
-      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+      await useServerFetch.get<productApiResponse[] | null>(
+        `/api/product/explore/14`
+      )
     )?.data
-    formSearch = result.map((product) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      sold: product.sold,
-      images: product.images,
-      storeId: product.store_id,
-      createdAt: new Date(product.created_at),
-      updatedAt: new Date(product.updated_at),
-    }))
+    if (result) {
+      formSearch = result.map((product) => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        sold: product.sold,
+        images: product.images,
+        storeId: product.store_id,
+        createdAt: new Date(product.created_at),
+        updatedAt: new Date(product.updated_at),
+      }))
+    }
   } catch (err) {
     console.log(err)
   }
@@ -32,20 +36,24 @@ export default async function Home() {
   let following: product[] = []
   try {
     const result = (
-      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+      await useServerFetch.get<productApiResponse[] | null>(
+        `/api/product/explore/14`
+      )
     )?.data
-    following = result.map((product) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      sold: product.sold,
-      images: product.images,
-      storeId: product.store_id,
-      createdAt: new Date(product.created_at),
-      updatedAt: new Date(product.updated_at),
-    }))
+    if (result) {
+      following = result.map((product) => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        sold: product.sold,
+        images: product.images,
+        storeId: product.store_id,
+        createdAt: new Date(product.created_at),
+        updatedAt: new Date(product.updated_at),
+      }))
+    }
   } catch (err) {
     console.log(err)
   }
@@ -55,18 +63,20 @@ export default async function Home() {
     const result = (
       await useServerFetch.get<productApiResponse[]>(`/api/product/explore/21`)
     )?.data
-    explore = result.map((product) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      sold: product.sold,
-      images: product.images,
-      storeId: product.store_id,
-      createdAt: new Date(product.created_at),
-      updatedAt: new Date(product.updated_at),
-    }))
+    if (result) {
+      explore = result.map((product) => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        sold: product.sold,
+        images: product.images,
+        storeId: product.store_id,
+        createdAt: new Date(product.created_at),
+        updatedAt: new Date(product.updated_at),
+      }))
+    }
   } catch (err) {
     console.log(err)
   }

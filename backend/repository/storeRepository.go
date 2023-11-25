@@ -57,6 +57,7 @@ func (r *StoreRepository) Create(store model.Store) (model.Store, error) {
 		sql,
 		store.OwnerEmail,
 		store.Name,
+		store.City,
 	))
 }
 

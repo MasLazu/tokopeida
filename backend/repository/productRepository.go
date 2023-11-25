@@ -131,8 +131,8 @@ func (r *ProductRepository) scanRowsJoinProductImage(rows *sql.Rows) ([]model.Pr
 }
 
 func (r *ProductRepository) Create(product model.Product) (model.Product, error) {
-	sql := `INSERT INTO products (name, store_id, description, stock, price)
-	VALUES ($1, $2, $3, $4, $5)
+	sql := `INSERT INTO products (name, store_id, description, stock, sold, price)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id, name, store_id, description, stock, sold, price, created_at, updated_at`
 
 	return r.scanRow(r.dbPool.QueryRow(

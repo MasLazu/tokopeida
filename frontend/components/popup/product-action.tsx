@@ -20,6 +20,7 @@ import { AxiosError } from "axios"
 import { cn } from "@/lib/utils"
 import { useContext } from "react"
 import { CartContext } from "@/app/cart-provider"
+import { UserContext } from "@/app/user-provider"
 
 type variant = "buy" | "add-to-cart"
 
@@ -36,7 +37,7 @@ export default function BuyProductPopup({
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState(1)
-  const { refetchCart } = useContext(CartContext)
+  const { refetchUser } = useContext(UserContext)
   const { toast } = useToast()
 
   async function buyProduct() {
@@ -45,6 +46,7 @@ export default function BuyProductPopup({
 
     try {
       await useClientFetch.post(`/api/product/${product.id}/buy`, formData)
+      refetchUser()
       toast({
         title: "Transaction has been created",
         description: `Success buying ${product.name}`,
@@ -75,7 +77,7 @@ export default function BuyProductPopup({
         description: `${product.name} has been added to cart`,
         duration: 3000,
       })
-      refetchCart()
+      refetchUser()
     } catch (err) {
       const error = err as AxiosError<{ message: string }>
       toast({

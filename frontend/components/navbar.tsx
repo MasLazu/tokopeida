@@ -28,10 +28,13 @@ import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import PopupTopUp from "@/components/popup/topup"
 import PopupCreateStore from "@/components/popup/create-store"
+import { CartContext } from "@/app/cart-provider"
+import { Badge } from "@/components/ui/badge"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
   const { store, setStore } = useContext(StoreContext)
+  const { cart } = useContext(CartContext)
   const { toast } = useToast()
 
   async function handleSignout() {
@@ -53,6 +56,16 @@ export default function Navbar() {
       })
       console.log(error)
     }
+  }
+
+  function getCartCount() {
+    let count = 0
+    cart.forEach((cartStoreItem) => {
+      cartStoreItem.items.forEach((item) => {
+        count += item.quantity
+      })
+    })
+    return count
   }
 
   return (
@@ -100,9 +113,12 @@ export default function Navbar() {
                         <div className="name font-semibold text-xl truncate">
                           {user.firstName} {user.lastName}
                         </div>
-                        <div className="flex gap-3 items-center font-semibold text-muted-foreground">
-                          <FaMoneyBill1Wave className="text-emerald-600 text-lg" />
-                          Rp. {user.balance.toLocaleString().replace(/,/g, ".")}
+                        <div className="flex gap-3 items-center font-semibold text-muted-foreground md:text-base text-sm">
+                          <FaMoneyBill1Wave className="text-emerald-600 text-lg min-w-fit" />
+                          <span className="truncate">
+                            Rp.{" "}
+                            {user.balance.toLocaleString().replace(/,/g, ".")}
+                          </span>
                         </div>
                       </div>
                       <Button variant="outline" size="icon" className="px-2.5">
@@ -137,8 +153,15 @@ export default function Navbar() {
                         </li>
                       </Link>
                       <Link href="/cart">
-                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                          <BsCart4 className="text-lg" /> Cart
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer relative">
+                          <BsCart4 className="text-lg" />
+                          <Badge
+                            className="absolute left-4 top-1 py-0 px-1"
+                            variant="destructive"
+                          >
+                            {getCartCount()}
+                          </Badge>
+                          Cart
                         </li>
                       </Link>
                     </ul>

@@ -38,16 +38,19 @@ export default function TableProduct({
 
   const fatchProducts = async () => {
     try {
-      const result = await useClientFetch.get<productApiResponse[]>(
-        `/api/store/${store?.id}/product`
-      )
+      const result = (
+        await useClientFetch.get<productApiResponse[]>(
+          `/api/store/${store?.id}/product`
+        )
+      ).data
       setProducts(
-        result.data.map((product) => ({
+        result.map((product) => ({
           id: product.id,
           name: product.name,
           description: product.description,
           price: product.price,
           stock: product.stock,
+          sold: product.sold,
           images: product.images,
           storeId: product.store_id,
           createdAt: new Date(product.created_at),

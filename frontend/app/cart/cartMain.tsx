@@ -13,12 +13,14 @@ import Image from "next/image"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import { useToast } from "@/components/ui/use-toast"
 import { cartStoreItem } from "@/app/cart-provider"
-import { AxiosError } from "axios"
 import { useState } from "react"
 import { Icons } from "@/components/ui/icons"
+import { AxiosError } from "axios"
+import { UserContext } from "../user-provider"
 
 export default function CartPage({ products }: { products: product[] }) {
   const { cart, setCart } = useContext(CartContext)
+  const { refetchUser } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { toast } = useToast()
 
@@ -78,6 +80,7 @@ export default function CartPage({ products }: { products: product[] }) {
       })
       temp = temp.filter((cartStoreItem) => cartStoreItem.items.length !== 0)
       setCart(temp)
+      refetchUser()
       toast({
         title: "Success!",
         description: "You have successfully bought the products",
@@ -126,7 +129,10 @@ export default function CartPage({ products }: { products: product[] }) {
                 cartStoreItem.items.map((cartItem) => {
                   if (cartItem.selected) {
                     return (
-                      <div className="flex justify-between gap-2">
+                      <div
+                        className="flex justify-between gap-2"
+                        key={cartItem.product.id}
+                      >
                         <span className="text-sm truncate">
                           {cartItem.product.name}
                         </span>

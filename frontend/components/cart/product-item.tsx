@@ -148,7 +148,7 @@ export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
                     ? `${process.env.NEXT_PUBLIC_DOMAIN}/api/assets/product_images/${cartItem.product.images[0]}`
                     : "https://layanan.karangbaru.acehtamiangkab.go.id/uploads/no-available.png"
                 }
-                alt="produc photo"
+                alt="product photo"
                 fill
               />
               {cartItem.product.stock > 0 && cartItem.product.stock < 10 ? (

@@ -27,7 +27,7 @@ export default function ProductCard(product: product) {
         {product.stock < 1 ? (
           <div className="absolute top-0 left-0 bg-slate-800/40 h-full w-full rounded-t-md">
             <div className="absolute bottom-2 left-2 rounded-full px-2 text-white text-[0.65rem] bg-gray-400/70 border font-semibold">
-              Out of stock
+              out of stock
             </div>
           </div>
         ) : null}

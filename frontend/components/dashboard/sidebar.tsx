@@ -59,13 +59,13 @@ export default function Sidebar({ className }: { className?: string }) {
         <span className="text-muted-foreground text-sm font-light">Store</span>
       </Link>
       <div className="flex items-center justify-between gap-3 mb-10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-w-[80%]">
           <Avatar className="h-12 w-12">
             <AvatarFallback className="bg-blue-400 font-semibold text-background">
               CN
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="overflow-hidden">
             <h2 className="text-foreground sm:text-base text-sm truncate font-semibold">
               {store?.name}
             </h2>

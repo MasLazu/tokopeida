@@ -13,7 +13,6 @@ import { useClientFetch } from "@/hooks/useClientFetch"
 import { useToast } from "../ui/use-toast"
 import { Icons } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
-import { set } from "react-hook-form"
 
 export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
   const { cart, setCart } = useContext(CartContext)
@@ -61,7 +60,7 @@ export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
           console.log(item.product.id)
           try {
             useClientFetch.put(`/api/cart/${cartItem.product.id}`, formData)
-            item.quantity++
+            item.quantity--
           } catch (err) {
             console.log(err)
             toast({
@@ -118,10 +117,27 @@ export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
     setIsLoading(false)
   }
 
+  function handleCheckbox() {
+    let temp: cartStoreItem[] = [...cart]
+
+    cart.forEach((cartStoreItem) => {
+      cartStoreItem.items.forEach((item) => {
+        if (item.product.id === cartItem.product.id) {
+          item.selected = !item.selected
+        }
+      })
+    })
+    setCart(temp)
+  }
+
   return (
     <div className="row md:grid md:grid-cols-7 gap-5 w-full">
       <div className="col-span-2 md:flex items-center md:gap-5 gap-3 hidden">
-        <Checkbox id="select-all" />
+        <Checkbox
+          id="select-all"
+          checked={cartItem.selected}
+          onClick={() => handleCheckbox()}
+        />
         <div className="flex-grow">
           <Card>
             <AspectRatio ratio={16 / 13}>
@@ -140,7 +156,11 @@ export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
         </div>
       </div>
       <div className="col-span-5 flex gap-5 lg:gap-0 items-center">
-        <Checkbox className="md:hidden" />
+        <Checkbox
+          className="md:hidden"
+          checked={cartItem.selected}
+          onClick={() => handleCheckbox()}
+        />
         <div className="overflow-hidden lg:text-lg lg:h-full lg:flex lg:flex-col lg:justify-around">
           <div>
             <h4 className="font-semibold truncate lg:text-xl">

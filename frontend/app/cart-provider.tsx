@@ -66,6 +66,7 @@ export default function CartProvider({
               updatedAt: new Date(cartItem.product.updated_at),
             },
             quantity: cartItem.quantity,
+            selected: true,
           })
         } else {
           let storeApiResponse = (
@@ -97,12 +98,12 @@ export default function CartProvider({
                   updatedAt: new Date(cartItem.product.updated_at),
                 },
                 quantity: cartItem.quantity,
+                selected: true,
               },
             ],
           })
         }
       }
-      console.log(cartItems)
       setCart(cartItems)
     }
   }

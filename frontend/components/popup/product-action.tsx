@@ -67,8 +67,7 @@ export default function BuyProductPopup({
     formData.append("product_id", product.id)
 
     try {
-      const result = await useClientFetch.post("/api/cart", formData)
-      console.log(result)
+      await useClientFetch.post("/api/cart", formData)
       toast({
         title: "Success added to cart",
         description: `${product.name} has been added to cart`,

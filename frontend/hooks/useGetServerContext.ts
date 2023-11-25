@@ -105,6 +105,7 @@ export async function useGetServerContext() {
             updatedAt: new Date(cartItem.product.updated_at),
           },
           quantity: cartItem.quantity,
+          selected: true,
         })
       } else {
         let storeApiResponse = (
@@ -136,6 +137,7 @@ export async function useGetServerContext() {
                 updatedAt: new Date(cartItem.product.updated_at),
               },
               quantity: cartItem.quantity,
+              selected: true,
             },
           ],
         })

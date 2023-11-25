@@ -1,31 +1,40 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import StoreItems from "@/components/cart/store-items"
 import { Button } from "@/components/ui/button"
 import ProductSlider from "@/components/product-slider"
-import { cartStoreItem } from "@/app/cart-provider"
 import { product } from "@/interfaces/product"
-import { useState, useContext, useEffect } from "react"
+import { useContext } from "react"
 import { CartContext } from "@/app/cart-provider"
 import EmptyIllustration from "@/assets/empty-illustration.png"
 import Image from "next/image"
 
-export default function CartPage({
-  products,
-  cartInit,
-}: {
-  products: product[]
-  cartInit: cartStoreItem[]
-}) {
+export default function CartPage({ products }: { products: product[] }) {
   const { cart } = useContext(CartContext)
-  const [cartItems, setCartItems] = useState<cartStoreItem[]>(cartInit)
-  useEffect(() => {
-    setCartItems(cart)
-  }, [cart])
-  console.log(cartItems)
+
+  function getTotalPrice() {
+    let total = 0
+    cart.forEach((cartStoreItem) => {
+      cartStoreItem.items.forEach((item) => {
+        if (item.selected) {
+          total += item.quantity * item.product.price
+        }
+      })
+    })
+    return total
+  }
+
+  function isNoSelected() {
+    let noSelected = true
+    cart.forEach((cartStoreItem) => {
+      cartStoreItem.items.forEach((item) => {
+        if (item.selected) noSelected = false
+      })
+    })
+    return noSelected
+  }
 
   return (
     <main className="container">
@@ -46,18 +55,7 @@ export default function CartPage({
             <h1 className="m:text-2xl text-xl font-semibold mb-5">
               Shopping Cart
             </h1>
-            <div className="flex gap-5">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="select-all" />
-                <label
-                  htmlFor="select-all"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Select all items
-                </label>
-              </div>
-            </div>
-            {cartItems.map((cartStoreItem, index) => (
+            {cart.map((cartStoreItem, index) => (
               <StoreItems key={index} cartStoreItem={cartStoreItem} />
             ))}
           </Card>
@@ -65,25 +63,37 @@ export default function CartPage({
             <h2 className="text-xl font-semibold">Summary</h2>
             <Separator className="my-4" />
             <div className="flex flex-col gap-3">
-              <div className="flex justify-between">
-                <span className="text-sm">SSD M2 NVME</span>
-                <span className="text-sm">2 x Rp. 500.000</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">VenomRX M.2E</span>
-                <span className="text-sm">1 x Rp. 274.000</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">GTX 750TI 4GB</span>
-                <span className="text-sm">1 x Rp. 1.113.000</span>
-              </div>
+              {cart.map((cartStoreItem) =>
+                cartStoreItem.items.map((cartItem) => {
+                  if (cartItem.selected) {
+                    return (
+                      <div className="flex justify-between gap-2">
+                        <span className="text-sm truncate">
+                          {cartItem.product.name}
+                        </span>
+                        <span className="text-sm min-w-fit">
+                          {`${cartItem.quantity} x Rp. ${cartItem.product.price
+                            .toLocaleString()
+                            .replace(/,/g, ".")}`}
+                        </span>
+                      </div>
+                    )
+                  } else {
+                    return null
+                  }
+                })
+              )}
             </div>
             <Separator className="my-4" />
             <div className="flex justify-between">
               <span className="font-semibold">Total</span>
-              <span className="font-semibold">Rp. 2.387.000</span>
+              <span className="font-semibold">
+                Rp. {getTotalPrice().toLocaleString().replace(/,/g, ".")}
+              </span>
             </div>
-            <Button className="w-full mt-5">Buy</Button>
+            <Button className="w-full mt-5" disabled={isNoSelected()}>
+              Buy
+            </Button>
           </Card>
         </div>
       )}

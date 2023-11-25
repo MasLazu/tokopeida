@@ -51,6 +51,7 @@ func SetupRoute(
 	product.GET("", productHandler.GetAll)
 	product.GET("/:id", productHandler.GetByID)
 	product.POST("/:id/buy", productHandler.Buy, authMiddleware.LoginOnly)
+	product.POST("/buy-multiple", productHandler.BuyMultiple, authMiddleware.LoginOnly)
 	product.GET("/explore/:amount", productHandler.GetExploreProduct)
 
 	transaction := e.Group("/transaction")

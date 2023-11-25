@@ -125,6 +125,29 @@ func (h *ProductHandler) UpdateCurrentStoreProduct(c echo.Context) error {
 	}
 }
 
+func (h *ProductHandler) GetAllStoreProduct(c echo.Context) error {
+	products, err := h.productRepository.GetAllByStoreIDJoinImage(c.Param("id"))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, products)
+}
+
+func (h *ProductHandler) GetExploreProduct(c echo.Context) error {
+	amount, err := strconv.ParseInt(c.Param("amount"), 10, 32)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
+	}
+
+	products, err := h.productRepository.GetRandomJoinImage(int(amount))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, products)
+}
+
 func (h *ProductHandler) Buy(c echo.Context) error {
 	quantity, err := strconv.ParseInt(c.FormValue("quantity"), 10, 32)
 	if err != nil {
@@ -158,25 +181,32 @@ func (h *ProductHandler) Buy(c echo.Context) error {
 	}
 }
 
-func (h *ProductHandler) GetAllStoreProduct(c echo.Context) error {
-	products, err := h.productRepository.GetAllByStoreIDJoinImage(c.Param("id"))
-	if err != nil {
+func (h *ProductHandler) BuyMultiple(c echo.Context) error {
+	var transactionRequest model.MultipleTransactionCreate
+	if err := c.Bind(&transactionRequest); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	log.Println(transactionRequest)
+
+	if err := h.validator.Struct(transactionRequest); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	transactions, err := h.productService.BuyMultiple(transactionRequest, c)
+	switch err {
+	case service.ErrProductNotFound:
+		return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+	case service.ErrInsufficientStock:
+		return echo.NewHTTPError(http.StatusBadRequest, "You buy more than the available stock")
+	case service.ErrInsufficientBalance:
+		return echo.NewHTTPError(http.StatusBadRequest, "You don't have enough balance to buy this product")
+	case service.ErrBuyYourOwnProduct:
+		return echo.NewHTTPError(http.StatusBadRequest, "You can't buy your own product")
+	case nil:
+		return c.JSON(http.StatusCreated, transactions)
+	default:
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
-
-	return c.JSON(http.StatusOK, products)
-}
-
-func (h *ProductHandler) GetExploreProduct(c echo.Context) error {
-	amount, err := strconv.ParseInt(c.Param("amount"), 10, 32)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
-	}
-
-	products, err := h.productRepository.GetRandomJoinImage(int(amount))
-	if err != nil {
-		return echo.ErrInternalServerError
-	}
-
-	return c.JSON(http.StatusOK, products)
 }

@@ -134,6 +134,98 @@ func (s *ProductService) Buy(transactionRequest model.TransactionCreate, echoCon
 	return transaction, nil
 }
 
+func (s *ProductService) BuyMultiple(transactionRequest model.MultipleTransactionCreate, echoContext echo.Context) ([]model.Transaction, error) {
+	var transaction []model.Transaction
+
+	user, err := s.authService.CurrentUser(echoContext)
+	if err != nil {
+		return transaction, err
+	}
+
+	tx, err := s.database.BeginTransaction()
+	if err != nil {
+		return transaction, err
+	}
+
+	for i, transactionRequest := range transactionRequest.Transactions {
+		transaction = append(transaction, model.Transaction{})
+
+		product, err := s.productRepository.GetByID(transactionRequest.ProductID)
+		if err != nil {
+			return transaction, ErrProductNotFound
+		}
+
+		store, err := s.storeRepository.GetByID(product.StoreID)
+		if err != nil {
+			return transaction, err
+		}
+
+		if store.OwnerEmail == user.Email {
+			return transaction, ErrBuyYourOwnProduct
+		}
+
+		if product.Stock < transactionRequest.Quantity {
+			return transaction, ErrInsufficientStock
+		}
+
+		valueTransaction := product.Price * int64(transactionRequest.Quantity)
+
+		if valueTransaction > user.Balance {
+			return transaction, ErrInsufficientBalance
+		}
+
+		storeOwner, err := s.userRepository.GetByEmail(store.OwnerEmail)
+		if err != nil {
+			tx.Rollback()
+			return transaction, err
+		}
+
+		storeOwner.Balance += valueTransaction
+		if _, err := s.userRepository.UpdateBalanceWithTransaction(storeOwner, tx); err != nil {
+			tx.Rollback()
+			return transaction, err
+		}
+
+		user.Balance -= valueTransaction
+		user, err = s.userRepository.UpdateBalanceWithTransaction(user, tx)
+		if err != nil {
+			tx.Rollback()
+			return transaction, err
+		}
+
+		transaction[i] = transactionRequest.ToTransaction()
+		transaction[i].UserEmail = user.Email
+
+		transaction[i], err = s.transactionRepository.CreateWithTransaction(transaction[i], tx)
+		if err != nil {
+			tx.Rollback()
+			return transaction, err
+		}
+
+		product.Stock -= transaction[i].Quantity
+		product.Sold += transaction[i].Quantity
+		product, err = s.productRepository.UpdateWithTransaction(product, tx)
+		if err != nil {
+			tx.Rollback()
+			return transaction, err
+		}
+
+		transaction[i].Product = product
+		transaction[i].ProductID = ""
+	}
+
+	if user.Balance < 0 {
+		tx.Rollback()
+		return transaction, ErrInsufficientBalance
+	}
+
+	if err := tx.Commit(); err != nil {
+		return transaction, err
+	}
+
+	return transaction, nil
+}
+
 func (s *ProductService) Create(createRequest model.ProductCreate, echoContext echo.Context) (model.Product, error) {
 	product := createRequest.ToProduct()
 

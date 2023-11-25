@@ -13,6 +13,10 @@ type Transaction struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
+type MultipleTransactionCreate struct {
+	Transactions []TransactionCreate `json:"transactions" validate:"required"`
+}
+
 type TransactionCreate struct {
 	ProductID string `json:"product_id" validate:"required"`
 	Quantity  int    `json:"quantity" validate:"required"`

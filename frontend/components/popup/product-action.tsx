@@ -38,6 +38,7 @@ export default function BuyProductPopup({
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState(1)
   const { refetchUser } = useContext(UserContext)
+  const { refetchCart } = useContext(CartContext)
   const { toast } = useToast()
 
   async function buyProduct() {
@@ -72,12 +73,12 @@ export default function BuyProductPopup({
 
     try {
       await useClientFetch.post("/api/cart", formData)
+      refetchCart()
       toast({
         title: "Success added to cart",
         description: `${product.name} has been added to cart`,
         duration: 3000,
       })
-      refetchUser()
     } catch (err) {
       const error = err as AxiosError<{ message: string }>
       toast({

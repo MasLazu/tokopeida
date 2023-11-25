@@ -130,10 +130,12 @@ export default function Navbar() {
                         </li>
                       </Link>
                       <PopupTopUp />
-                      <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <LuHistory className="text-lg" />
-                        Transaction history
-                      </li>
+                      <Link href="/transaction">
+                        <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                          <LuHistory className="text-lg" />
+                          Transaction history
+                        </li>
+                      </Link>
                       <Link href="/cart">
                         <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                           <BsCart4 className="text-lg" /> Cart

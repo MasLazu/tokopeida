@@ -151,6 +151,18 @@ export default function ProductItem({ cartItem }: { cartItem: cartItem }) {
                 alt="produc photo"
                 fill
               />
+              {cartItem.product.stock > 0 && cartItem.product.stock < 10 ? (
+                <div className="absolute bottom-2 left-2 rounded-full px-2 text-red-500 text-[0.65rem] bg-white/70 border font-semibold">
+                  {cartItem.product.stock} left
+                </div>
+              ) : null}
+              {cartItem.product.stock < 1 ? (
+                <div className="absolute top-0 left-0 bg-slate-800/40 h-full w-full rounded-md">
+                  <div className="absolute bottom-2 left-2 rounded-full px-2 text-white text-[0.65rem] bg-gray-400/70 border font-semibold">
+                    Out of stock
+                  </div>
+                </div>
+              ) : null}
             </AspectRatio>
           </Card>
         </div>

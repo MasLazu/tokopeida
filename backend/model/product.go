@@ -10,7 +10,7 @@ type Product struct {
 	Name        string     `json:"name,omitempty"`
 	StoreID     string     `json:"store_id,omitempty"`
 	Description string     `json:"description,omitempty"`
-	Stock       int        `json:"stock,omitempty"`
+	Stock       int        `json:"stock"`
 	Sold        int        `json:"sold"`
 	Price       int64      `json:"price,omitempty"`
 	Images      []string   `json:"images,omitempty"`

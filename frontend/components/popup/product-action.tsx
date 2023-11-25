@@ -27,10 +27,12 @@ export default function BuyProductPopup({
   product,
   variant,
   className,
+  disabled,
 }: {
   product: product
   variant: variant
   className?: string
+  disabled?: boolean
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [amount, setAmount] = useState(1)
@@ -77,7 +79,7 @@ export default function BuyProductPopup({
     } catch (err) {
       const error = err as AxiosError<{ message: string }>
       toast({
-        title: "Error",
+        title: "Failed to add to cart",
         description:
           error.response?.data.message.toString() ?? "Something went wrong",
         variant: "destructive",
@@ -93,6 +95,7 @@ export default function BuyProductPopup({
         {variant === "buy" ? (
           <Button
             size="lg"
+            disabled={disabled}
             className={cn(
               className,
               "flex gap-4 items-center px-2 py-2.5 rounded-md cursor-pointer"
@@ -102,6 +105,7 @@ export default function BuyProductPopup({
           </Button>
         ) : (
           <Button
+            disabled={disabled}
             size="lg"
             variant={"outline"}
             className={cn(

@@ -8,12 +8,54 @@ import { useServerFetch } from "@/hooks/useServerFetch"
 import { productApiResponse, product } from "@/interfaces/product"
 
 export default async function Home() {
-  let products: product[] = []
+  let formSearch: product[] = []
   try {
     const result = (
       await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
     )?.data
-    products = result.map((product) => ({
+    formSearch = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      sold: product.sold,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
+  let following: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+    )?.data
+    following = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      sold: product.sold,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
+  let explore: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/21`)
+    )?.data
+    explore = result.map((product) => ({
       id: product.id,
       name: product.name,
       description: product.description,
@@ -38,26 +80,15 @@ export default async function Home() {
             <HomeCarosel />
             <ProductSlider
               title="Based on your Search"
-              productsData={products}
+              productsData={formSearch}
             />
-            <ProductSlider title="Following" productsData={products} />
+            <ProductSlider title="Following" productsData={following} />
             <div className="row pt-5">
-              <h3 className="text-xl font-semibold my-2">For You</h3>
+              <h3 className="text-xl font-semibold my-2">Explore</h3>
               <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 lg:gap-4 gap-3 mb-5">
-                {products.map((product, index) => (
+                {explore.map((product, index) => (
                   <Link key={index} href={`/yanto-store/${product.id}`}>
-                    <ProductCard
-                      key={product.id}
-                      name={product.name}
-                      price={product.price}
-                      rating={4.9}
-                      sold={108}
-                      img={
-                        product.images
-                          ? `${process.env.NEXT_PUBLIC_DOMAIN}/api/assets/product_images/${product.images[0]}`
-                          : "https://layanan.karangbaru.acehtamiangkab.go.id/uploads/no-available.png"
-                      }
-                    />
+                    <ProductCard {...product} />
                   </Link>
                 ))}
               </div>

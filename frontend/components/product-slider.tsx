@@ -75,17 +75,7 @@ export default function ProductSlider({
             return (
               <SwiperSlide key={product.id} className="cursor-pointers">
                 <Link href={`/${product.storeId}/${product.id}`}>
-                  <ProductCard
-                    name={product.name}
-                    price={product.price}
-                    rating={4.9}
-                    sold={product.sold}
-                    img={
-                      product.images
-                        ? `${process.env.NEXT_PUBLIC_DOMAIN}/api/assets/product_images/${product.images[0]}`
-                        : "https://layanan.karangbaru.acehtamiangkab.go.id/uploads/no-available.png"
-                    }
-                  />
+                  <ProductCard {...product} />
                 </Link>
               </SwiperSlide>
             )

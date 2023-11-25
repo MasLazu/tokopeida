@@ -11,9 +11,11 @@ import { cn } from "@/lib/utils"
 export default function ProductImageCarosel({
   filenames,
   className,
+  variant,
 }: {
   filenames: string[] | undefined
   className?: string
+  variant?: "out-of-stock" | "in-stock"
 }) {
   return (
     <Swiper
@@ -23,8 +25,15 @@ export default function ProductImageCarosel({
       className={cn(className, "rounded-md")}
     >
       {filenames && filenames?.length > 1 ? (
-        <div className="absolute flex h-full -left-2 top-0 z-10 items-center">
+        <div className="absolute flex h-full -left-2 top-0 z-20 items-center">
           <NavSliderPrev />
+        </div>
+      ) : null}
+      {variant === "out-of-stock" ? (
+        <div className="absolute top-0 left-0 bg-slate-800/40 h-full w-full rounded-t-md z-10">
+          <div className="absolute bottom-4 left-4 rounded-full px-4 py-1 text-white bg-gray-400/70 border font-semibold text-xl">
+            Out of stock
+          </div>
         </div>
       ) : null}
       {filenames ? (
@@ -53,7 +62,7 @@ export default function ProductImageCarosel({
         </SwiperSlide>
       )}
       {filenames && filenames?.length > 1 ? (
-        <div className="absolute flex h-full -right-2 top-0 z-10 items-center">
+        <div className="absolute flex h-full -right-2 top-0 z-20 items-center">
           <NavSliderNext />
         </div>
       ) : null}

@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import PageTransition from "@/components/page-pransition"
 import { product, productApiResponse } from "@/interfaces/product"
 import { useServerFetch } from "@/hooks/useServerFetch"
-import BuyProductPopup from "@/components/popup/product-action"
+import ProductActionPopup from "@/components/popup/product-action"
 import WishlistButton from "./wishlistButton"
 import { store, storeApiResponse } from "@/interfaces/store"
 
@@ -101,7 +101,10 @@ export default async function ProductPage({
           <main className="container lg:grid lg:grid-cols-2 xl:gap-x-24 gap-x-12">
             <div>
               <Card>
-                <ProductImageCarosel filenames={product?.images} />
+                <ProductImageCarosel
+                  filenames={product.images}
+                  variant={product.stock === 0 ? "out-of-stock" : "in-stock"}
+                />
               </Card>
             </div>
             <div className="info lg:mt-0 md:mt-6 mt-4">
@@ -118,14 +121,30 @@ export default async function ProductPage({
                 </div>
                 <Separator orientation="vertical" className="h-6" />
                 <p className="text-md text-slate-600">{product.sold} sold</p>
+                {product.stock > 0 && product.stock < 10 ? (
+                  <>
+                    <Separator orientation="vertical" className="h-6" />
+                    <p className="text-md text-slate-600">
+                      {product.stock} left
+                    </p>
+                  </>
+                ) : null}
               </div>
               <h2 className="md:text-5xl text-4xl font-semibold my-8">
                 Rp. {product?.price.toLocaleString().replace(/,/g, ".")}
               </h2>
               <div className="flex gap-4 md:hidden">
                 <div className="grid grid-cols-2 gap-4 mb-8 flex-grow">
-                  <BuyProductPopup product={product} variant="buy" />
-                  <BuyProductPopup product={product} variant="add-to-cart" />
+                  <ProductActionPopup
+                    product={product}
+                    variant="buy"
+                    disabled={product.stock === 0}
+                  />
+                  <ProductActionPopup
+                    product={product}
+                    variant="add-to-cart"
+                    disabled={product.stock === 0}
+                  />
                 </div>
                 <WishlistButton productId={params.productId} />
               </div>
@@ -164,8 +183,16 @@ export default async function ProductPage({
               </div>
               <div className="md:flex gap-4 hidden">
                 <div className="grid grid-cols-2 gap-4 mb-8 flex-grow">
-                  <BuyProductPopup product={product} variant="buy" />
-                  <BuyProductPopup product={product} variant="add-to-cart" />
+                  <ProductActionPopup
+                    product={product}
+                    variant="buy"
+                    disabled={product.stock === 0}
+                  />
+                  <ProductActionPopup
+                    product={product}
+                    variant="add-to-cart"
+                    disabled={product.stock === 0}
+                  />
                 </div>
                 <WishlistButton productId={params.productId} />
               </div>

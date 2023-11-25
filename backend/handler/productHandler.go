@@ -187,8 +187,6 @@ func (h *ProductHandler) BuyMultiple(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	log.Println(transactionRequest)
-
 	if err := h.validator.Struct(transactionRequest); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

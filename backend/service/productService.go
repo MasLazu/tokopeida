@@ -152,25 +152,30 @@ func (s *ProductService) BuyMultiple(transactionRequest model.MultipleTransactio
 
 		product, err := s.productRepository.GetByID(transactionRequest.ProductID)
 		if err != nil {
+			tx.Rollback()
 			return transaction, ErrProductNotFound
 		}
 
 		store, err := s.storeRepository.GetByID(product.StoreID)
 		if err != nil {
+			tx.Rollback()
 			return transaction, err
 		}
 
 		if store.OwnerEmail == user.Email {
+			tx.Rollback()
 			return transaction, ErrBuyYourOwnProduct
 		}
 
 		if product.Stock < transactionRequest.Quantity {
+			tx.Rollback()
 			return transaction, ErrInsufficientStock
 		}
 
 		valueTransaction := product.Price * int64(transactionRequest.Quantity)
 
 		if valueTransaction > user.Balance {
+			tx.Rollback()
 			return transaction, ErrInsufficientBalance
 		}
 

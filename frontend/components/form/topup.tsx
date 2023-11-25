@@ -41,6 +41,9 @@ export default function TopUpFrom({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      amount: "",
+    },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

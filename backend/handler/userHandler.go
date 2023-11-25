@@ -105,6 +105,7 @@ func (h *UserHandler) UpdateCurrent(c echo.Context) error {
 
 func (h *UserHandler) TopUp(c echo.Context) error {
 	price, err := strconv.ParseInt(c.FormValue("amount"), 10, 64)
+
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
 	}

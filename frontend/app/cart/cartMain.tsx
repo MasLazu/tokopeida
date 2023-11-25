@@ -10,9 +10,17 @@ import { useContext } from "react"
 import { CartContext } from "@/app/cart-provider"
 import EmptyIllustration from "@/assets/empty-illustration.png"
 import Image from "next/image"
+import { useClientFetch } from "@/hooks/useClientFetch"
+import { useToast } from "@/components/ui/use-toast"
+import { cartStoreItem } from "@/app/cart-provider"
+import { AxiosError } from "axios"
+import { useState } from "react"
+import { Icons } from "@/components/ui/icons"
 
 export default function CartPage({ products }: { products: product[] }) {
-  const { cart } = useContext(CartContext)
+  const { cart, setCart } = useContext(CartContext)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { toast } = useToast()
 
   function getTotalPrice() {
     let total = 0
@@ -34,6 +42,57 @@ export default function CartPage({ products }: { products: product[] }) {
       })
     })
     return noSelected
+  }
+
+  async function handleBuy() {
+    setIsLoading(true)
+    const cartItems: {
+      transactions: {
+        product_id: string
+        quantity: number
+      }[]
+    } = { transactions: [] }
+    cart.forEach((cartStoreItem) => {
+      cartStoreItem.items.forEach((item) => {
+        if (item.selected) {
+          cartItems.transactions.push({
+            product_id: item.product.id,
+            quantity: item.quantity,
+          })
+        }
+      })
+    })
+    try {
+      await useClientFetch.post("/api/product/buy-multiple", cartItems)
+
+      cartItems.transactions.forEach(async (transaction) => {
+        await useClientFetch.delete(`/api/cart/${transaction.product_id}`)
+      })
+
+      let temp: cartStoreItem[] = [...cart]
+      temp.forEach((cartStoreItem, i) => {
+        const newCartStoreItem = cartStoreItem.items.filter(
+          (item) => !item.selected
+        )
+        temp[i].items = newCartStoreItem
+      })
+      temp = temp.filter((cartStoreItem) => cartStoreItem.items.length !== 0)
+      setCart(temp)
+      toast({
+        title: "Success!",
+        description: "You have successfully bought the products",
+        duration: 3000,
+      })
+    } catch (error) {
+      console.log(error)
+      const err = error as AxiosError<{ message: string }>
+      toast({
+        title: "Error!",
+        description: err.response?.data.message,
+        duration: 3000,
+      })
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -91,7 +150,14 @@ export default function CartPage({ products }: { products: product[] }) {
                 Rp. {getTotalPrice().toLocaleString().replace(/,/g, ".")}
               </span>
             </div>
-            <Button className="w-full mt-5" disabled={isNoSelected()}>
+            <Button
+              className="w-full mt-5"
+              disabled={isNoSelected() || isLoading}
+              onClick={() => handleBuy()}
+            >
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Buy
             </Button>
           </Card>

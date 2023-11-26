@@ -23,18 +23,27 @@ import PopupSignup from "@/components/popup/signup"
 import Link from "next/link"
 import { UserContext } from "@/app/user-provider"
 import { StoreContext } from "@/app/store-provider"
-import { useContext } from "react"
+import { useContext, useState, useRef } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import PopupTopUp from "@/components/popup/topup"
 import PopupCreateStore from "@/components/popup/create-store"
 import { CartContext } from "@/app/cart-provider"
 import { Badge } from "@/components/ui/badge"
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
   const { store, setStore } = useContext(StoreContext)
   const { cart } = useContext(CartContext)
+  const [isOpen, setIsOpen] = useState(false)
+  const inputSearchRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
   async function handleSignout() {
@@ -68,19 +77,58 @@ export default function Navbar() {
     return count
   }
 
+  function handleSelectSearch(keyword: string) {
+    if (inputSearchRef && inputSearchRef.current) {
+      inputSearchRef.current.value = keyword
+    }
+  }
+
   return (
     <nav className="bg-background/80 backdrop-blur-lg sticky top-0 z-50">
-      <div className="flex items-center justify-between p-4 gap-8">
+      <div className="flex items-center justify-between p-3.5 gap-8">
         <Link
           href="/"
           className="font-bold hidden sm:block text-foreground text-lg"
         >
           Tokopeida
         </Link>
-        <Input
-          placeholder="Search"
-          className="lg:max-w-4xl bg-background/80 backdrop-blur-lg"
-        />
+        <div className="relative w-8/12 h-10 rounded-md">
+          <Command
+            className={`absolute min-w-fit rounded-md border top-0 ${
+              isOpen ? "shadow-md" : null
+            }`}
+          >
+            <CommandInput
+              ref={inputSearchRef}
+              placeholder="Type to search..."
+              onFocus={() => setIsOpen(true)}
+              onBlur={() => setIsOpen(false)}
+            />
+            {isOpen ? (
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandItem onSelect={() => handleSelectSearch("Calender")}>
+                  <span>Calendar</span>
+                </CommandItem>
+                <CommandItem>
+                  <span>Search Emoji</span>
+                </CommandItem>
+                <CommandItem>
+                  <span>Calculator</span>
+                </CommandItem>
+                <CommandItem>
+                  <span>Profile</span>
+                </CommandItem>
+                <CommandItem>
+                  <span>Billing</span>
+                </CommandItem>
+                <CommandItem>
+                  <span>Settings</span>
+                </CommandItem>
+              </CommandList>
+            ) : null}
+          </Command>
+        </div>
         <div className="flex items-center gap-4">
           {user ? (
             <Sheet>

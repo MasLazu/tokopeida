@@ -17,10 +17,12 @@ export default function StoreItems({
 
   function handleSelectAll() {
     const temp: cartStoreItem[] = [...cart]
-    temp.forEach((cartStoreItem) => {
-      cartStoreItem.items.forEach((item) => {
-        item.selected = true
-      })
+    temp.forEach((cartStore) => {
+      if (cartStore.store.id === cartStoreItem.store.id) {
+        cartStoreItem.items.forEach((item) => {
+          item.selected = true
+        })
+      }
     })
     setSelected(true)
     setCart(temp)
@@ -28,10 +30,12 @@ export default function StoreItems({
 
   function handleUnselectAll() {
     const temp: cartStoreItem[] = [...cart]
-    temp.forEach((cartStoreItem) => {
-      cartStoreItem.items.forEach((item) => {
-        item.selected = false
-      })
+    temp.forEach((cartStore) => {
+      if (cartStore.store.id === cartStoreItem.store.id) {
+        cartStoreItem.items.forEach((item) => {
+          item.selected = false
+        })
+      }
     })
     setSelected(false)
     setCart(temp)

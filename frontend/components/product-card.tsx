@@ -7,7 +7,7 @@ import { product } from "@/interfaces/product"
 
 export default function ProductCard(product: product) {
   return (
-    <Card className="w-full">
+    <Card className="w-full hover:brightness-90">
       <AspectRatio ratio={16 / 13} className="bg-muted border-b">
         <Image
           src={

@@ -76,6 +76,27 @@ export default async function ProductPage({
     console.log(err)
   }
 
+  let products2: product[] = []
+  try {
+    const result = (
+      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+    )?.data
+    products2 = result.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      sold: product.sold,
+      images: product.images,
+      storeId: product.store_id,
+      createdAt: new Date(product.created_at),
+      updatedAt: new Date(product.updated_at),
+    }))
+  } catch (err) {
+    console.log(err)
+  }
+
   let store: store | null = null
   try {
     const result = (
@@ -385,7 +406,7 @@ export default async function ProductPage({
             <ProductSlider
               className="col-span-2"
               title="For You"
-              productsData={products}
+              productsData={products2}
             />
           </main>
         </div>

@@ -107,6 +107,9 @@ export default function Navbar() {
     if (e.key === "Enter") {
       handleSearch()
     }
+    if (e.key === "Escape") {
+      ;(e.target as HTMLInputElement).blur()
+    }
   }
 
   return (
@@ -120,7 +123,7 @@ export default function Navbar() {
         </Link>
         <div className="relative w-8/12 h-10 rounded-md">
           <Command
-            className={`absolute min-w-fit rounded-md border top-0 ${
+            className={`absolute min-w-fit rounded-lg border top-0 ${
               isOpen ? "shadow-md" : null
             }`}
           >

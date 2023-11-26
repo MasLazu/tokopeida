@@ -13,6 +13,7 @@ const Command = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
 >(({ className, ...props }, ref) => (
   <CommandPrimitive
+    shouldFilter={false}
     ref={ref}
     className={cn(
       "flex w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground",

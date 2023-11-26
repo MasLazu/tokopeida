@@ -1,9 +1,8 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Sheet,
   SheetContent,
@@ -23,7 +22,7 @@ import PopupSignup from "@/components/popup/signup"
 import Link from "next/link"
 import { UserContext } from "@/app/user-provider"
 import { StoreContext } from "@/app/store-provider"
-import { useContext, useState, useRef } from "react"
+import { useContext, useState, KeyboardEvent, use } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useClientFetch } from "@/hooks/useClientFetch"
 import PopupTopUp from "@/components/popup/topup"
@@ -32,19 +31,25 @@ import { CartContext } from "@/app/cart-provider"
 import { Badge } from "@/components/ui/badge"
 import {
   Command,
-  CommandEmpty,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { productApiResponse } from "@/interfaces/product"
+import { useRouter, usePathname } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 export default function Navbar() {
   const { user, setUser } = useContext(UserContext)
   const { store, setStore } = useContext(StoreContext)
   const { cart } = useContext(CartContext)
   const [isOpen, setIsOpen] = useState(false)
-  const inputSearchRef = useRef<HTMLInputElement>(null)
+  const [suggestion, setSuggestion] = useState<string[]>([])
+  const [keyword, setKeyword] = useState<string>(
+    useSearchParams().get("keyword") ?? ""
+  )
   const { toast } = useToast()
+  const router = useRouter()
 
   async function handleSignout() {
     try {
@@ -77,9 +82,30 @@ export default function Navbar() {
     return count
   }
 
-  function handleSelectSearch(keyword: string) {
-    if (inputSearchRef && inputSearchRef.current) {
-      inputSearchRef.current.value = keyword
+  async function getSuggestion(keyword: string) {
+    setKeyword(keyword)
+    if (keyword === "") return setSuggestion([])
+    try {
+      const res = await useClientFetch.get<productApiResponse[] | null>(
+        `/api/product/search/${keyword}?limit=8`
+      )
+      if (res.data) {
+        setSuggestion(res.data.map((product) => product.name))
+      }
+    } catch (err) {
+      setSuggestion([])
+      console.log(err)
+    }
+  }
+
+  function handleSearch() {
+    if (keyword === "") return
+    router.push(`/search?keyword=${keyword}`)
+  }
+
+  const handleEnterKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch()
     }
   }
 
@@ -99,32 +125,29 @@ export default function Navbar() {
             }`}
           >
             <CommandInput
-              ref={inputSearchRef}
+              value={keyword}
               placeholder="Type to search..."
               onFocus={() => setIsOpen(true)}
               onBlur={() => setIsOpen(false)}
+              onValueChange={getSuggestion}
+              onKeyDown={handleEnterKeyPress}
             />
             {isOpen ? (
               <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandItem onSelect={() => handleSelectSearch("Calender")}>
-                  <span>Calendar</span>
-                </CommandItem>
-                <CommandItem>
-                  <span>Search Emoji</span>
-                </CommandItem>
-                <CommandItem>
-                  <span>Calculator</span>
-                </CommandItem>
-                <CommandItem>
-                  <span>Profile</span>
-                </CommandItem>
-                <CommandItem>
-                  <span>Billing</span>
-                </CommandItem>
-                <CommandItem>
-                  <span>Settings</span>
-                </CommandItem>
+                {!suggestion.includes(keyword) ? (
+                  <CommandItem>{keyword}</CommandItem>
+                ) : null}
+                {suggestion.map((keyword, i) => (
+                  <CommandItem
+                    onSelect={() => {
+                      setKeyword(keyword)
+                      handleSearch()
+                    }}
+                    key={i}
+                  >
+                    <span>{keyword}</span>
+                  </CommandItem>
+                ))}
               </CommandList>
             ) : null}
           </Command>

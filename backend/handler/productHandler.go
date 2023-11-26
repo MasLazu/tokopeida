@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"tokopeida-backend/model"
 	"tokopeida-backend/repository"
@@ -210,13 +211,22 @@ func (h *ProductHandler) BuyMultiple(c echo.Context) error {
 }
 
 func (h *ProductHandler) Search(c echo.Context) error {
-	amount, err := strconv.ParseInt(c.FormValue("amount"), 10, 32)
+	limit, err := strconv.ParseInt(c.FormValue("limit"), 10, 32)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid limit")
 	}
 
-	products, err := h.productRepository.SearchJoinImage(c.Param("keyword"), int(amount))
+	keyword, err := url.QueryUnescape(c.Param("keyword"))
 	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid keyword")
+	}
+
+	products, err := h.productRepository.SearchJoinImage(keyword, int(limit))
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return echo.NewHTTPError(http.StatusNotFound, "Product not found")
+		}
+		log.Println(err)
 		return echo.ErrInternalServerError
 	}
 

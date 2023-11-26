@@ -97,7 +97,7 @@ export default async function Home() {
               <h3 className="text-xl font-semibold my-2">Explore</h3>
               <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 lg:gap-4 gap-3 mb-5">
                 {explore.map((product, index) => (
-                  <Link key={index} href={`/yanto-store/${product.id}`}>
+                  <Link key={index} href={`/${product.storeId}/${product.id}`}>
                     <ProductCard {...product} />
                   </Link>
                 ))}

@@ -263,11 +263,19 @@ func (r *ProductRepository) GetAllByStoreIDJoinImage(storeID string) ([]model.Pr
 }
 
 func (r *ProductRepository) GetRandomJoinImage(amount int) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
-	FROM products 
-	LEFT JOIN product_images ON products.id = product_images.product_id
-	ORDER BY random()
-	LIMIT $1`
+	sql := `WITH RandomProducts AS (
+		SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at
+		FROM products
+		ORDER BY RANDOM()
+		LIMIT $1
+	),
+	ProductsWithImages AS (
+		SELECT p.id, p.name, p.store_id, p.description, p.stock, p.sold, p.price, p.created_at, p.updated_at, pi.file_name
+		FROM RandomProducts p
+		LEFT JOIN product_images pi ON p.id = pi.product_id
+	)
+	SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
+	FROM ProductsWithImages`
 
 	rows, err := r.dbPool.Query(sql, amount)
 	if err != nil {
@@ -278,15 +286,23 @@ func (r *ProductRepository) GetRandomJoinImage(amount int) ([]model.Product, err
 	return r.scanRowsJoinProductImage(rows)
 }
 
-func (r *ProductRepository) SearchJoinImage(keyword string, amount int) ([]model.Product, error) {
-	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
-	FROM products 
-	LEFT JOIN product_images ON products.id = product_images.product_id
-	WHERE to_tsvector('english', name) @@ to_tsquery('english', $1)
-	ORDER BY ts_rank(to_tsvector('english', name), to_tsquery('english', $1)) DESC
-	LIMIT $2`
+func (r *ProductRepository) SearchJoinImage(keyword string, limit int) ([]model.Product, error) {
+	sql := `WITH Products AS (
+		SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at
+		FROM products
+		WHERE to_tsvector('english', name) @@ plainto_tsquery('english', $1)
+		ORDER BY ts_rank(to_tsvector('english', name), plainto_tsquery('english', $1)) DESC
+		LIMIT $2
+	),
+	ProductsWithImages AS (
+		SELECT p.id, p.name, p.store_id, p.description, p.stock, p.sold, p.price, p.created_at, p.updated_at, pi.file_name
+		FROM Products p
+		LEFT JOIN product_images pi ON p.id = pi.product_id
+	)
+	SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
+	FROM ProductsWithImages`
 
-	rows, err := r.dbPool.Query(sql, keyword, amount)
+	rows, err := r.dbPool.Query(sql, keyword, limit)
 	if err != nil {
 		return nil, err
 	}

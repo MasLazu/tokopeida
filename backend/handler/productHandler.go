@@ -208,3 +208,17 @@ func (h *ProductHandler) BuyMultiple(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 }
+
+func (h *ProductHandler) Search(c echo.Context) error {
+	amount, err := strconv.ParseInt(c.FormValue("amount"), 10, 32)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid amount")
+	}
+
+	products, err := h.productRepository.SearchJoinImage(c.Param("keyword"), int(amount))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+
+	return c.JSON(http.StatusOK, products)
+}

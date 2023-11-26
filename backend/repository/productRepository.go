@@ -277,3 +277,20 @@ func (r *ProductRepository) GetRandomJoinImage(amount int) ([]model.Product, err
 
 	return r.scanRowsJoinProductImage(rows)
 }
+
+func (r *ProductRepository) SearchJoinImage(keyword string, amount int) ([]model.Product, error) {
+	sql := `SELECT id, name, store_id, description, stock, sold, price, created_at, updated_at, file_name
+	FROM products 
+	LEFT JOIN product_images ON products.id = product_images.product_id
+	WHERE to_tsvector('english', name) @@ to_tsquery('english', $1)
+	ORDER BY ts_rank(to_tsvector('english', name), to_tsquery('english', $1)) DESC
+	LIMIT $2`
+
+	rows, err := r.dbPool.Query(sql, keyword, amount)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return r.scanRowsJoinProductImage(rows)
+}

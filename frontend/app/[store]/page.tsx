@@ -1,6 +1,6 @@
 import Navbar from "@/components/navbar"
 import { Card } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { BsShare } from "react-icons/bs"
@@ -9,6 +9,7 @@ import ProductSlider from "@/components/product-slider"
 import PageTransition from "@/components/page-pransition"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import { productApiResponse, product } from "@/interfaces/product"
+import { store, storeApiResponse } from "@/interfaces/store"
 
 export default async function StorePage({
   params,
@@ -36,6 +37,22 @@ export default async function StorePage({
     console.log(err)
   }
 
+  let storeData: store | null = null
+  try {
+    const result = (
+      await useServerFetch.get<storeApiResponse>(`/api/store/${params.store}`)
+    )?.data
+    storeData = {
+      id: result.id,
+      name: result.name,
+      city: result.city,
+      createdAt: new Date(result.created_at),
+      updatedAt: new Date(result.updated_at),
+    }
+  } catch (err) {
+    console.log(err)
+  }
+
   return (
     <>
       <Navbar />
@@ -46,19 +63,17 @@ export default async function StorePage({
               <div className="flex md:justify-between items-center">
                 <div className="left flex gap-7">
                   <Avatar className="sm:w-32 sm:h-32 h-16 w-16">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback className="text-5xl font-semibold bg-blue-400 text-background">
+                      CN
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col justify-between">
                     <div className="info">
                       <h1 className="text-2xl font-semibold truncate">
-                        {params.store}
+                        {storeData?.name}
                       </h1>
                       <p className="text-md text-muted-foreground">
-                        jakarta Utara
+                        {storeData?.city}
                       </p>
                     </div>
                     <div className="action sm:grid grid-cols-7 gap-3 hidden">

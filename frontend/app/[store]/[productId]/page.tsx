@@ -14,6 +14,7 @@ import { useServerFetch } from "@/hooks/useServerFetch"
 import ProductActionPopup from "@/components/popup/product-action"
 import WishlistButton from "./wishlistButton"
 import { store, storeApiResponse } from "@/interfaces/store"
+import Link from "next/link"
 
 export default async function ProductPage({
   params,
@@ -188,13 +189,17 @@ export default async function ProductPage({
                 {product?.description}
               </p>
               <div className="md:flex hidden gap-4 items-center my-8">
-                <Avatar className="w-14 h-14">
-                  <AvatarFallback className="bg-blue-400 font-semibold text-background text-xl">
-                    CN
-                  </AvatarFallback>
-                </Avatar>
+                <Link href={`/${store?.id}`}>
+                  <Avatar className="w-14 h-14">
+                    <AvatarFallback className="bg-blue-400 font-semibold text-background text-xl">
+                      CN
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
                 <div className="info flex-grow">
-                  <h3 className="text-xl font-semibold">{store?.name}</h3>
+                  <Link href={`/${store?.id}`}>
+                    <h3 className="text-xl font-semibold">{store?.name}</h3>
+                  </Link>
                   <p className="text-md text-muted-foreground">{store?.city}</p>
                 </div>
                 <Button variant="outline" size="icon">

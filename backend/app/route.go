@@ -46,6 +46,7 @@ func SetupRoute(
 	store.PUT("/current", storeHandler.UpdateCurrent, authMiddleware.LoginOnly)
 	store.POST("/current/product", productHandler.CreateCurrentStoreProduct, authMiddleware.LoginOnly)
 	store.PUT("/current/product/:id", productHandler.UpdateCurrentStoreProduct, authMiddleware.LoginOnly)
+	store.GET("/:id/transaction", transactionHandler.GetAllStoreTransaction)
 
 	product := e.Group("/product")
 	product.GET("", productHandler.GetAll)

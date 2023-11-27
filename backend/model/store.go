@@ -20,5 +20,5 @@ type StoreRegister struct {
 }
 
 func (s *StoreRegister) ToStore() Store {
-	return Store{Name: s.Name}
+	return Store{Name: s.Name, City: s.City}
 }

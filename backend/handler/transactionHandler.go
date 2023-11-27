@@ -44,6 +44,15 @@ func (h *TransactionHandler) GetAllCurrentUserTransaction(c echo.Context) error 
 	return c.JSON(http.StatusOK, transactions)
 }
 
+func (h *TransactionHandler) GetAllStoreTransaction(c echo.Context) error {
+	transaction, err := h.transactionRepository.GetAllByStoreIDJoinProduct(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Transaction not found")
+	}
+
+	return c.JSON(http.StatusOK, transaction)
+}
+
 func (h *TransactionHandler) GetByID(c echo.Context) error {
 	transaction, err := h.transactionRepository.GetByID(c.Param("id"))
 	if err != nil {

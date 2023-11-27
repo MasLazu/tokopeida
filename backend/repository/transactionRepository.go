@@ -206,3 +206,21 @@ func (r *TransactionRepository) GetAllByUserEmailJoinProduct(email string) ([]mo
 
 	return r.scanRowsJoinProductJoinImage(rows)
 }
+
+func (r *TransactionRepository) GetAllByStoreIDJoinProduct(storeID string) ([]model.Transaction, error) {
+	sql := `SELECT t.id, user_email, quantity, t.created_at, p.id, p.name, 
+	p.store_id, p.description, p.stock, p.price, p.created_at, p.updated_at, pi.file_name
+	FROM transactions t
+	INNER JOIN products p ON t.product_id = p.id
+	LEFT JOIN product_images pi ON pi.product_id = p.id
+	WHERE p.store_id = $1
+	ORDER BY t.created_at DESC`
+
+	rows, err := r.dbPool.Query(sql, storeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return r.scanRowsJoinProductJoinImage(rows)
+}

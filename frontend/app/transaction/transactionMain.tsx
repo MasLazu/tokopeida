@@ -6,40 +6,44 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { useClientFetch } from "@/hooks/useClientFetch"
-import { transactionApiResponse } from "@/interfaces/transaction"
 import { AspectRatio } from "@radix-ui/react-aspect-ratio"
+import { transaction, transactionApiResponse } from "@/interfaces/transaction"
 import Link from "next/link"
 
 export default function TransactionMain() {
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<transaction[]>([])
 
   useEffect(() => {
     async function fetchData() {
-      const res = (
-        await useClientFetch.get<transactionApiResponse[]>(
-          "/api/user/current/transaction"
+      try {
+        const res = (
+          await useClientFetch.get<transactionApiResponse[]>(
+            "/api/user/current/transaction"
+          )
+        ).data
+        setData(
+          res.map((transaction) => ({
+            id: transaction.id,
+            userEmail: transaction.user_email,
+            quantity: transaction.quantity,
+            createdAt: new Date(transaction.created_at),
+            product: {
+              id: transaction.product.id,
+              name: transaction.product.name,
+              description: transaction.product.description,
+              price: transaction.product.price,
+              stock: transaction.product.stock,
+              sold: transaction.product.sold,
+              images: transaction.product.images,
+              storeId: transaction.product.store_id,
+              createdAt: new Date(transaction.product.created_at),
+              updatedAt: new Date(transaction.product.updated_at),
+            },
+          }))
         )
-      ).data
-      setData(
-        res.map((transaction) => ({
-          id: transaction.id,
-          userEmail: transaction.user_email,
-          quantity: transaction.quantity,
-          createdAt: new Date(transaction.created_at),
-          product: {
-            id: transaction.product.id,
-            name: transaction.product.name,
-            description: transaction.product.description,
-            price: transaction.product.price,
-            stock: transaction.product.stock,
-            sold: transaction.product.sold,
-            images: transaction.product.images,
-            storeId: transaction.product.store_id,
-            createdAt: new Date(transaction.product.created_at),
-            updatedAt: new Date(transaction.product.updated_at),
-          },
-        }))
-      )
+      } catch (err) {
+        console.log(err)
+      }
     }
     fetchData()
   }, [])

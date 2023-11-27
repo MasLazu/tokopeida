@@ -22,21 +22,21 @@ export default function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname()
 
   const navItems = [
-    {
-      title: "Home",
-      icon: <HiOutlineHome className="text-lg" />,
-      href: "/store/dashboard/home",
-    },
-    {
-      title: "Analytics",
-      icon: <TbPresentationAnalytics className="text-lg" />,
-      href: "/store/dashboard/analytics",
-    },
-    {
-      title: "Chats",
-      icon: <IoChatboxEllipsesOutline className="text-lg" />,
-      href: "/store/dashboard/chats",
-    },
+    // {
+    //   title: "Home",
+    //   icon: <HiOutlineHome className="text-lg" />,
+    //   href: "/store/dashboard/home",
+    // },
+    // {
+    //   title: "Analytics",
+    //   icon: <TbPresentationAnalytics className="text-lg" />,
+    //   href: "/store/dashboard/analytics",
+    // },
+    // {
+    //   title: "Chats",
+    //   icon: <IoChatboxEllipsesOutline className="text-lg" />,
+    //   href: "/store/dashboard/chats",
+    // },
     {
       title: "Products",
       icon: <BsCart4 className="text-lg" />,
@@ -69,13 +69,16 @@ export default function Sidebar({ className }: { className?: string }) {
             <h2 className="text-foreground sm:text-base text-sm truncate font-semibold">
               {store?.name}
             </h2>
-            <div className="flex gap-0.5">
+            <p className="text-muted-foreground text-xs truncate">
+              {store?.city}
+            </p>
+            {/* <div className="flex gap-0.5">
               <FaStar className="text-amber-400 w-4 h-4" />
               <FaStar className="text-amber-400 w-4 h-4" />
               <FaStar className="text-amber-400 w-4 h-4" />
               <FaStar className="text-slate-200 w-4 h-4" />
               <FaStar className="text-slate-200 w-4 h-4" />
-            </div>
+            </div> */}
           </div>
         </div>
         <Button variant="outline" size="icon" className="px-2.5">

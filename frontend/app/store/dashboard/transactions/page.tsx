@@ -47,7 +47,7 @@ export default function TransactionsDashboard() {
   }, [])
 
   return (
-    <ScrollArea className="h-screen w-full p-4">
+    <ScrollArea className="h-screen w-full px-4">
       <h1 className="text-2xl font-semibold mb-4">Store Transactions</h1>
       <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
         {data.map((transaction) => (
@@ -61,11 +61,13 @@ export default function TransactionsDashboard() {
                   .replace(/,/g, ".")}
               </div>
             </div>
-
             <div className="flex items-center gap-5">
               <div className="sm:text-base text-[0.8rem]">
                 <div className="text-muted-foreground truncate">
                   Order ID : {transaction.id}
+                </div>
+                <div className="text-muted-foreground truncate">
+                  User Email : {transaction.userEmail}
                 </div>
                 <div className="text-muted-foreground truncate">
                   Date :{" "}

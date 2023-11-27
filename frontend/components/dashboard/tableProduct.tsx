@@ -91,10 +91,10 @@ export default function TableProduct({
           <TableHeader>
             <TableRow>
               <TableHead>Product Info</TableHead>
-              <TableHead>Ratings</TableHead>
+              <TableHead>Sold</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Stock</TableHead>
-              <TableHead>Active</TableHead>
+              {/* <TableHead>Active</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -117,12 +117,14 @@ export default function TableProduct({
                   />
                   <div className="w-64">{product.name}</div>
                 </TableCell>
-                <TableCell>4.6</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.stock}</TableCell>
+                <TableCell>{product.sold}</TableCell>
                 <TableCell>
-                  <Switch checked={true} />
+                  Rp. {product.price.toLocaleString().replace(/,/g, ".")}
                 </TableCell>
+                <TableCell>{product.stock}</TableCell>
+                {/* <TableCell>
+                  <Switch checked={true} />
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

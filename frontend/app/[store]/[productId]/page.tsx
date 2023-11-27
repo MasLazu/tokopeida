@@ -223,7 +223,7 @@ export default async function ProductPage({
                 <WishlistButton productId={params.productId} />
               </div>
             </div>
-            <div className="user-reviews col-span-2 md:grid md:grid-cols-3 gap-x-16">
+            {/* <div className="user-reviews col-span-2 md:grid md:grid-cols-3 gap-x-16">
               <h2 className="col-span-3 text-2xl font-semibold mt-9 mb-8">
                 User Reviews
               </h2>
@@ -402,7 +402,7 @@ export default async function ProductPage({
                 </div>
                 <Separator orientation="horizontal" className="my-3" />
               </div>
-            </div>
+            </div> */}
             <ProductSlider
               className="col-span-2"
               title="Related Product"

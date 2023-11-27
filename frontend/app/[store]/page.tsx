@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { BsShare } from "react-icons/bs"
 import { FaStar } from "react-icons/fa6"
-import ProductSlider from "@/components/product-slider"
 import PageTransition from "@/components/page-pransition"
 import { useServerFetch } from "@/hooks/useServerFetch"
 import { productApiResponse, product } from "@/interfaces/product"
 import { store, storeApiResponse } from "@/interfaces/store"
+import Link from "next/link"
+import ProductCard from "@/components/product-card"
 
 export default async function StorePage({
   params,
@@ -19,7 +20,9 @@ export default async function StorePage({
   let products: product[] = []
   try {
     const result = (
-      await useServerFetch.get<productApiResponse[]>(`/api/product/explore/14`)
+      await useServerFetch.get<productApiResponse[]>(
+        `/api/store/${params.store}/product`
+      )
     )?.data
     products = result.map((product) => ({
       id: product.id,
@@ -33,6 +36,7 @@ export default async function StorePage({
       createdAt: new Date(product.created_at),
       updatedAt: new Date(product.updated_at),
     }))
+    console.log(products)
   } catch (err) {
     console.log(err)
   }
@@ -87,7 +91,7 @@ export default async function StorePage({
                     </div>
                   </div>
                 </div>
-                <div className="right lg:grid grid-cols-11 hidden">
+                {/* <div className="right lg:grid grid-cols-11 hidden">
                   <div className="rating col-span-3 flex flex-col items-center justify-center text-muted-foreground text-sm lg:text-xs xl:text-sm text-center">
                     <div className="flex items-center text-lg text-primary font-bold gap-2">
                       <FaStar className="text-amber-400 w-[1.3rem] h-[1.3rem]" />
@@ -109,7 +113,7 @@ export default async function StorePage({
                     </div>
                     followers
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="action grid grid-cols-5 gap-3 sm:hidden mt-4">
                 <Button className="col-span-2" size="sm">
@@ -123,15 +127,15 @@ export default async function StorePage({
                 </Button>
               </div>
             </Card>
-            <ProductSlider
-              title="Best Selling Products"
-              productsData={products}
-            />
-            <ProductSlider title="Newest Products" productsData={products} />
-            <ProductSlider
-              title="Most Viewed Products"
-              productsData={products}
-            />
+            <div className="row pt-5">
+              <div className="grid 2xl:grid-cols-7 lg:grid-cols-6 md:grid-cols-4 grid-cols-3 lg:gap-4 gap-3 mb-5">
+                {products.map((product, index) => (
+                  <Link key={index} href={`/${product.storeId}/${product.id}`}>
+                    <ProductCard {...product} />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </main>
         </div>
       </PageTransition>

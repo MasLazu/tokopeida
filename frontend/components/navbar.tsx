@@ -36,7 +36,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { productApiResponse } from "@/interfaces/product"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation"
 
 export default function Navbar() {
@@ -204,7 +204,7 @@ export default function Navbar() {
                   <div className="py-2">
                     <ul className="flex flex-col gap-1 text-gray-600">
                       {store ? (
-                        <Link href="/store/dashboard/home">
+                        <Link href="/store/dashboard/products">
                           <li className="flex gap-4 items-center px-2 py-2.5 rounded-md hover:bg-gray-100 cursor-pointer">
                             <VscGraph className="text-lg" />
                             Dashboard Store

@@ -16,11 +16,13 @@ services:
     build:
       context: ./backend
       target: final
+    ports:
+      - "3001:3001"
     depends_on:
       - postgres
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/tokopeida?sslmode=disable
-      - PORT=80
+      - PORT=3001
       - JWT_KEY=dqu5dUcWkazVXcnAUU5pSBvftQQHDzWtHqWe6GICNlQ
       - DOMAIN=http://localhost
 
@@ -29,11 +31,13 @@ services:
     build:
       context: ./frontend
       target: final
+    ports:
+      - "3000:3000"
     depends_on:
       - backend
     environment:
       - NEXT_PUBLIC_DOMAIN=http://localhost
-      - PORT=80
+      - PORT=3000
 
   nginx:
     container_name: tokopeida-nginx

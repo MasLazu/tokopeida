@@ -103,16 +103,16 @@ export default function TransactionMain() {
                     <div className="text-muted-foreground truncate">
                       Qty : {transaction.quantity}
                     </div>
-                    <div className="grid grid-cols-2 mt-3 gap-x-3">
-                      <Button size="sm">Rate</Button>
-                      <Link
-                        href={`/${transaction.product.storeId}/${transaction.product.id}`}
-                      >
-                        <Button size="sm" variant="outline" className="w-full">
-                          View Page
-                        </Button>
-                      </Link>
-                    </div>
+                    {/* <div className="grid grid-cols-2 mt-3 gap-x-3">
+                      <Button size="sm">Rate</Button> */}
+                    <Link
+                      href={`/${transaction.product.storeId}/${transaction.product.id}`}
+                    >
+                      <Button size="sm" className="w-full mt-5">
+                        View Page
+                      </Button>
+                    </Link>
+                    {/* </div> */}
                   </div>
                 </div>
               </Card>

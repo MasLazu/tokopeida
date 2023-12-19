@@ -33,6 +33,11 @@ export const useClientFetch = {
   post: async <T>(path: string, body?: any) => {
     try {
       const accessToken = await useClientAccessToken()
+      console.log({
+        NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+        path,
+        full: process.env.NEXT_PUBLIC_DOMAIN + path,
+      })
 
       return await axios.post<T>(process.env.NEXT_PUBLIC_DOMAIN + path, body, {
         headers: {

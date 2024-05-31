@@ -5,6 +5,7 @@ import (
 	"tokopeida-backend/middleware"
 
 	"github.com/labstack/echo/v4"
+	logger "github.com/labstack/echo/v4/middleware"
 )
 
 func SetupRoute(
@@ -20,6 +21,7 @@ func SetupRoute(
 	corsMiddleware *middleware.CorsMiddleware,
 ) {
 	corsMiddleware.Cors(e)
+	e.Use(logger.Logger())
 
 	e.Static("/assets", "static")
 
